@@ -1,0 +1,13 @@
+**/.vscode/
+**/.idea/
+**/target/
+**/HELP.md
+**/AGENTS.md
+pos-coffee-be/.gitattributes
+pos-coffee-fe/.gitattributes
+pos-coffee-be/.gitignore
+pos-coffee-fe/.gitignore
+**/node_modules/
+**/.env
+**/build/
+**/dist/
