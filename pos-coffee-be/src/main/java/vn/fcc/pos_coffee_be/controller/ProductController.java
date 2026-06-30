@@ -26,47 +26,27 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(
-            @PageableDefault(size = 10, sort = "id",
-                    direction = Sort.Direction.DESC)
-            Pageable pageable) {
-
-        return ResponseEntity.ok(
-                productService.getAllProducts(pageable)
-        );
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(
-            @Valid @RequestBody ProductRequest request) {
-
-        return new ResponseEntity<>(
-                productService.createProduct(request),
-                HttpStatus.CREATED
-        );
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
+        return new ResponseEntity<>(productService.createProduct(request), HttpStatus.CREATED);
     }
 
     @PostMapping("/{productId}/variants")
     public ResponseEntity<ProductVariantResponse> addVariant(
             @PathVariable String productId,
             @Valid @RequestBody ProductVariantRequest request) {
-
         return new ResponseEntity<>(
-                productService.addVariant(
-                        productId,
-                        request.sizeName(),
-                        request.priceAdjustment()
-                ),
+                productService.addVariant(productId, request.sizeName(), request.priceAdjustment()),
                 HttpStatus.CREATED
         );
     }
 
     @GetMapping("/{productId}/variants")
-    public ResponseEntity<List<ProductVariantResponse>>
-    getVariantsByProductId(
-            @PathVariable String productId) {
-
-        return ResponseEntity.ok(
-                productService.getVariantsByProductId(productId)
-        );
+    public ResponseEntity<List<ProductVariantResponse>> getVariantsByProductId(@PathVariable String productId) {
+        return ResponseEntity.ok(productService.getVariantsByProductId(productId));
     }
 }

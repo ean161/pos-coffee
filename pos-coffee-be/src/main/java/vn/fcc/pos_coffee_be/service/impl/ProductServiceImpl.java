@@ -3,15 +3,14 @@ package vn.fcc.pos_coffee_be.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import vn.fcc.pos_coffee_be.dto.request.ProductRequest;
 import vn.fcc.pos_coffee_be.dto.response.ProductResponse;
 import vn.fcc.pos_coffee_be.dto.response.ProductVariantResponse;
 import vn.fcc.pos_coffee_be.entity.Category;
 import vn.fcc.pos_coffee_be.entity.Product;
-import vn.fcc.pos_coffee_be.entity.ProductVariants;
+import vn.fcc.pos_coffee_be.entity.ProductVariant;
+import vn.fcc.pos_coffee_be.exception.ResourceNotFoundException;
 import vn.fcc.pos_coffee_be.repository.CategoryRepository;
 import vn.fcc.pos_coffee_be.repository.ProductRepository;
 import vn.fcc.pos_coffee_be.repository.ProductVariantRepository;
@@ -30,64 +29,45 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public ProductResponse createProduct(ProductRequest request) {
-
         Category category = categoryRepository
                 .findById(request.categoryId())
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Danh mục không tồn tại"
-                        ));
+                .orElseThrow(() -> new ResourceNotFoundException("Danh mục không tồn tại với ID: " + request.categoryId()));
 
         Product product = new Product();
-
         product.setCategory(category);
         product.setName(request.name());
         product.setBasePrice(request.basePrice());
         product.setStatus(true);
 
         Product saved = productRepository.save(product);
-
         return mapToProductResponse(saved);
     }
 
     @Override
-    public ProductVariantResponse addVariant(
-            String productId,
-            String sizeName,
-            BigDecimal priceAdjustment
-    ) {
-
+    public ProductVariantResponse addVariant(String productId, String sizeName, BigDecimal priceAdjustment) {
         Product product = productRepository
                 .findById(productId)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Sản phẩm không tồn tại"
-                        ));
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại với ID: " + productId));
 
-        ProductVariants variant = new ProductVariants();
-
+        ProductVariant variant = new ProductVariant();
         variant.setProduct(product);
         variant.setSizeName(sizeName);
         variant.setPriceAdjustment(priceAdjustment);
 
-        ProductVariants saved = variantRepository.save(variant);
-
+        ProductVariant saved = variantRepository.save(variant);
         return mapToVariantResponse(saved);
     }
 
     @Override
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
-
-        return productRepository
-                .findAll(pageable)
-                .map(this::mapToProductResponse);
+        return productRepository.findAll(pageable).map(this::mapToProductResponse);
     }
 
     @Override
     public List<ProductVariantResponse> getVariantsByProductId(String productId) {
-
+        if (!productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("Sản phẩm không tồn tại với ID: " + productId);
+        }
         return variantRepository.findByProductId(productId)
                 .stream()
                 .map(this::mapToVariantResponse)
@@ -95,7 +75,6 @@ public class ProductServiceImpl implements IProductService {
     }
 
     private ProductResponse mapToProductResponse(Product product) {
-
         return new ProductResponse(
                 product.getId(),
                 product.getCategory().getId(),
@@ -105,8 +84,7 @@ public class ProductServiceImpl implements IProductService {
         );
     }
 
-    private ProductVariantResponse mapToVariantResponse(ProductVariants variant) {
-
+    private ProductVariantResponse mapToVariantResponse(ProductVariant variant) {
         return new ProductVariantResponse(
                 variant.getId(),
                 variant.getProduct().getId(),

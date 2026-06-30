@@ -1,6 +1,7 @@
 package vn.fcc.pos_coffee_be.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import vn.fcc.pos_coffee_be.dto.response.CategoryResponse;
 
 public interface ICategoryService {
@@ -11,7 +12,7 @@ public interface ICategoryService {
 
     void updateStatus(String id, Boolean status);
 
-    Page<CategoryResponse> getAllCategories(int page, int size);
+    Page<CategoryResponse> getAllCategories(Pageable pageable);
 
     CategoryResponse getCategoryById(String id);
 
