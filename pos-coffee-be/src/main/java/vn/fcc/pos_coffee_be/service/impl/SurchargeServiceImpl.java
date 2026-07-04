@@ -3,7 +3,9 @@ package vn.fcc.pos_coffee_be.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.fcc.pos_coffee_be.dto.request.SurchargeRequest;
 import vn.fcc.pos_coffee_be.dto.response.SurchargeResponse;
 import vn.fcc.pos_coffee_be.entity.Surcharge;
@@ -52,6 +54,12 @@ public class SurchargeServiceImpl implements ISurchargeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phụ thu: " + id));
         s.setStatus(status);
         surchargeRepository.save(s);
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void autoUpdateExpiredSurcharges() {
+        surchargeRepository.updateExpiredSurcharges(LocalDateTime.now());
     }
 
     private SurchargeResponse mapToResponse(Surcharge s) {
