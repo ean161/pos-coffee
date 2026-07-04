@@ -3,7 +3,9 @@ package vn.fcc.pos_coffee_be.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.fcc.pos_coffee_be.dto.request.VoucherRequest;
 import vn.fcc.pos_coffee_be.dto.response.VoucherResponse;
 import vn.fcc.pos_coffee_be.entity.Voucher;
@@ -57,6 +59,12 @@ public class VoucherServiceImpl implements IVoucherService {
         return voucherRepository.findByCode(code.toUpperCase())
                 .filter(v -> v.getStatus() && v.getExpiryDate().isAfter(LocalDateTime.now()))
                 .map(this::mapToResponse);
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void autoUpdateExpiredVouchers() {
+        voucherRepository.updateExpiredVouchers(LocalDateTime.now());
     }
 
     private VoucherResponse mapToResponse(Voucher v) {
