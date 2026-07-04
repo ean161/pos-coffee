@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
-// Import thêm CupSoda đại diện cho các loại Topping đồ uống
-import { LayoutDashboard, Coffee, LayoutGrid, Tag, Receipt, UsersRound, CupSoda } from "lucide-react";
+import { LayoutDashboard, Coffee, LayoutGrid, Tag, Receipt, UsersRound, CupSoda, Coins } from "lucide-react";
 
 const MENU_ITEMS = [
     { icon: <LayoutDashboard className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Dashboard', path: '/' },
     { icon: <Coffee className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Sản phẩm', path: '/products' },
     { icon: <LayoutGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Danh mục', path: '/categories' },
-    { icon: <CupSoda className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Topping', path: '/toppings' }, // Bổ sung mới
+    { icon: <CupSoda className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Topping', path: '/toppings' },
+    { icon: <Coins className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Phụ thu', path: '/surcharges' },
     { icon: <Tag className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Khuyến mãi', path: '/vouchers' },
     { icon: <Receipt className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Đơn hàng', path: '/orders' },
     { icon: <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Nhân viên', path: '/staff' },
@@ -15,7 +15,6 @@ const MENU_ITEMS = [
 const SideBar = ({ isOpen }) => {
     return (
         <aside className={`transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) bg-[#1f120c] text-white flex flex-col ${isOpen ? 'w-64' : 'w-0 opacity-0 overflow-hidden'} md:static fixed h-screen z-50 shadow-2xl`}>
-            {/* Logo Section - Hiệu ứng hạt cà phê xoay nhẹ */}
             <div className="p-7 flex items-center gap-3 border-b border-[#2d1c13]">
                 <div className="group bg-gradient-to-tr from-[#a27b5c] to-[#c5a880] p-3 rounded-2xl shadow-lg shadow-[#a27b5c]/20 transition-all duration-500 hover:rotate-12 hover:scale-105">
                     <Coffee className="w-5 h-5 text-[#fbf9f6] transition-transform duration-700 group-hover:scale-110" />
@@ -26,7 +25,6 @@ const SideBar = ({ isOpen }) => {
                 </div>
             </div>
 
-            {/* Navigation - Hiệu ứng trượt màu khi active */}
             <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                 {MENU_ITEMS.map((item, index) => (
                     <NavLink
@@ -40,7 +38,6 @@ const SideBar = ({ isOpen }) => {
                             }`
                         }
                     >
-                        {/* Background slider khi Active */}
                         {({ isActive }) => (
                             <>
                                 {isActive && (
@@ -48,7 +45,6 @@ const SideBar = ({ isOpen }) => {
                                 )}
                                 <span className="relative z-10 transition-transform duration-300 group-hover:scale-110">{item.icon}</span>
                                 <span className="font-medium tracking-wide relative z-10 text-sm">{item.label}</span>
-                                {/* Line chỉ trạng thái ở rìa nút */}
                                 {isActive && (
                                     <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#c5a880] rounded-r-md" />
                                 )}
@@ -59,7 +55,6 @@ const SideBar = ({ isOpen }) => {
                 ))}
             </nav>
 
-            {/* Footer */}
             <div className="p-6 border-t border-[#2d1c13] bg-[#160b07] flex items-center justify-between text-[10px] text-[#a27b5c]">
                 <span className="font-bold tracking-wider">EST. 2026 POS COFFEE</span>
                 <span className="px-2 py-0.5 rounded-full bg-[#a27b5c]/10 text-[#c5a880] font-bold border border-[#a27b5c]/25">v3.0</span>
