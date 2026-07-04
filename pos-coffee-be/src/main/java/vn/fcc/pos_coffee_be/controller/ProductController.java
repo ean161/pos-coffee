@@ -49,4 +49,24 @@ public class ProductController {
     public ResponseEntity<List<ProductVariantResponse>> getVariantsByProductId(@PathVariable String productId) {
         return ResponseEntity.ok(productService.getVariantsByProductId(productId));
     }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String productId) {
+        return ResponseEntity.ok(productService.getProductById(productId));
+    }
+
+    @PutMapping("/variants/{variantId}")
+    public ResponseEntity<ProductVariantResponse> updateVariant(
+            @PathVariable String variantId,
+            @Valid @RequestBody ProductVariantRequest request) {
+        return ResponseEntity.ok(
+                productService.updateVariant(variantId, request.sizeName(), request.priceAdjustment())
+        );
+    }
+
+    @DeleteMapping("/variants/{variantId}")
+    public ResponseEntity<Void> deleteVariant(@PathVariable String variantId) {
+        productService.deleteVariant(variantId);
+        return ResponseEntity.noContent().build();
+    }
 }

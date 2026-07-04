@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface IProductService {
 
+    void deleteVariant(String variantId);
+    ProductVariantResponse updateVariant(String variantId, String sizeName, BigDecimal priceAdjustment);
+
     ProductResponse createProduct(ProductRequest request);
 
     ProductVariantResponse addVariant(
@@ -22,4 +25,6 @@ public interface IProductService {
     Page<ProductResponse> getAllProducts(Pageable pageable);
 
     List<ProductVariantResponse> getVariantsByProductId(String productId);
+
+    ProductResponse getProductById(String productId);
 }

@@ -28,6 +28,26 @@ public class ProductServiceImpl implements IProductService {
     private final CategoryRepository categoryRepository;
 
     @Override
+    public void deleteVariant(String variantId) {
+        if (!variantRepository.existsById(variantId)) {
+            throw new ResourceNotFoundException("Biến thể không tồn tại với ID: " + variantId);
+        }
+        variantRepository.deleteById(variantId);
+    }
+
+    @Override
+    public ProductVariantResponse updateVariant(String variantId, String sizeName, BigDecimal priceAdjustment) {
+        ProductVariant variant = variantRepository.findById(variantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Biến thể không tồn tại với ID: " + variantId));
+
+        variant.setSizeName(sizeName);
+        variant.setPriceAdjustment(priceAdjustment);
+
+        ProductVariant saved = variantRepository.save(variant);
+        return mapToVariantResponse(saved);
+    }
+
+    @Override
     public ProductResponse createProduct(ProductRequest request) {
         Category category = categoryRepository
                 .findById(request.categoryId())
@@ -72,6 +92,14 @@ public class ProductServiceImpl implements IProductService {
                 .stream()
                 .map(this::mapToVariantResponse)
                 .toList();
+    }
+
+    @Override
+    public ProductResponse getProductById(String productId) {
+        Product product = productRepository
+                .findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại với ID: " + productId));
+        return mapToProductResponse(product);
     }
 
     private ProductResponse mapToProductResponse(Product product) {
