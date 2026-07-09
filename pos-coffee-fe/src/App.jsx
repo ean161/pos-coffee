@@ -7,6 +7,7 @@ import ProductFormPage from './features/product/pages/ProductFormPage';
 import ToppingPage from './features/topping/pages/ToppingPage';
 import SurchargePage from './features/surcharge/pages/SurchargePage';
 import VoucherPage from './features/voucher/pages/VoucherPage';
+import InventoryPage from './features/inventory/pages/InventoryPage';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/products/create" element={<ProductFormPage />} />
                     <Route path="/products/edit/:id" element={<ProductFormPage />} />
                     <Route path="/toppings" element={<ToppingPage />} />
+                    <Route path="/inventories" element={<InventoryPage />} />
                     <Route path="/surcharges" element={<SurchargePage />} />
                     <Route path="/vouchers" element={<VoucherPage />} />
 
