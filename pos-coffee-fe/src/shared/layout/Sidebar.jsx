@@ -10,7 +10,7 @@ const MENU_ITEMS = [
     { icon: <Tag className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Khuyến mãi', path: '/vouchers' },
     { icon: <Receipt className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Đơn hàng', path: '/orders' },
     { icon: <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Nhân viên', path: '/staff' },
-    { icon: <Boxes className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Tồn kho', path: '/inventories' },
+    { icon: <Boxes className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Tồn kho', path: '/admin/inventory' },
 
 ];
 
