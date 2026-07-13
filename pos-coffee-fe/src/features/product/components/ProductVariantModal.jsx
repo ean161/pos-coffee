@@ -39,7 +39,7 @@ const ProductVariantModal = ({ isOpen, onClose, product }) => {
 
     const handleAdd = async (e) => {
         e.preventDefault();
-        if (!sizeName || !priceAdjustment) return;
+        if (!sizeName || !priceAdjustment || parseFloat(priceAdjustment) < 0) return;
         setAdding(true);
         try {
             await axiosClient.post(`/products/${product.productId}/variants`, {
@@ -82,7 +82,7 @@ const ProductVariantModal = ({ isOpen, onClose, product }) => {
     };
 
     const handleUpdate = async (variantId) => {
-        if (!editSizeName || !editPriceAdjustment) return;
+        if (!editSizeName || !editPriceAdjustment || parseFloat(editPriceAdjustment) < 0) return;
         setSavingId(variantId);
         try {
             await axiosClient.put(`/products/variants/${variantId}`, {
@@ -146,12 +146,18 @@ const ProductVariantModal = ({ isOpen, onClose, product }) => {
                                                     value={editSizeName}
                                                     onChange={(e) => setEditSizeName(e.target.value)}
                                                 />
-                                                <input
-                                                    type="number"
-                                                    className="w-24 bg-white border border-[#ebdcd0] p-1.5 rounded-lg text-xs font-bold"
-                                                    value={editPriceAdjustment}
-                                                    onChange={(e) => setEditPriceAdjustment(e.target.value)}
-                                                />
+                                                <div className="flex flex-col">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        className={`w-24 bg-white border ${parseFloat(editPriceAdjustment) < 0 ? 'border-red-500' : 'border-[#ebdcd0]'} p-1.5 rounded-lg text-xs font-bold`}
+                                                        value={editPriceAdjustment}
+                                                        onChange={(e) => setEditPriceAdjustment(e.target.value)}
+                                                    />
+                                                    {parseFloat(editPriceAdjustment) < 0 && (
+                                                        <span className="text-[10px] text-red-500 font-bold block mt-0.5">Không được âm</span>
+                                                    )}
+                                                </div>
                                             </div>
                                         ) : (
                                             <div className="flex justify-between items-center flex-1 mr-4">
@@ -165,8 +171,8 @@ const ProductVariantModal = ({ isOpen, onClose, product }) => {
                                                 <>
                                                     <button
                                                         onClick={() => handleUpdate(vId)}
-                                                        disabled={savingId === vId}
-                                                        className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                                        disabled={savingId === vId || parseFloat(editPriceAdjustment) < 0}
+                                                        className="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors disabled:opacity-50"
                                                     >
                                                         {savingId === vId ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                                                     </button>
@@ -213,21 +219,25 @@ const ProductVariantModal = ({ isOpen, onClose, product }) => {
                                     required
                                 />
                             </div>
-                            <div>
+                            <div className="flex flex-col">
                                 <input
                                     type="number"
-                                    className="w-full bg-[#FAF6F0]/40 border border-[#ebdcd0] p-2.5 rounded-xl text-stone-850 font-bold focus:border-[#a27b5c] outline-none text-xs"
+                                    min="0"
+                                    className={`w-full bg-[#FAF6F0]/40 border ${parseFloat(priceAdjustment) < 0 ? 'border-red-500' : 'border-[#ebdcd0]'} p-2.5 rounded-xl text-stone-850 font-bold focus:border-[#a27b5c] outline-none text-xs`}
                                     placeholder="Bù giá (Vd: 5000)"
                                     value={priceAdjustment}
                                     onChange={(e) => setPriceAdjustment(e.target.value)}
                                     required
                                 />
+                                {parseFloat(priceAdjustment) < 0 && (
+                                    <span className="text-[10px] text-red-500 font-bold block mt-1">Không được âm</span>
+                                )}
                             </div>
                         </div>
                         <button
                             type="submit"
-                            disabled={adding}
-                            className="w-full py-2.5 bg-[#4a3728] hover:bg-[#35271c] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-98 transition-all"
+                            disabled={adding || parseFloat(priceAdjustment) < 0}
+                            className="w-full py-2.5 bg-[#4a3728] hover:bg-[#35271c] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-98 transition-all disabled:opacity-50"
                         >
                             {adding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
                             Thêm Size

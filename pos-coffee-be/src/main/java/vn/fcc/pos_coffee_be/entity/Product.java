@@ -1,6 +1,7 @@
 package vn.fcc.pos_coffee_be.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class Product {
     private String name;
 
     @Column(nullable = false)
+    @Min(value = 0)
     private BigDecimal basePrice;
 
     @Column(nullable = false)
