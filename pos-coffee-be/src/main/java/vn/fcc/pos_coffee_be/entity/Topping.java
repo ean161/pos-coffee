@@ -1,6 +1,7 @@
 package vn.fcc.pos_coffee_be.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class Topping {
     private String name;
 
     @Column(nullable = false)
+    @Min(value = 0)
     private BigDecimal price;
 
     @Column(nullable = false)

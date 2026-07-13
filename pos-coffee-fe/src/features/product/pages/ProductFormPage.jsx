@@ -47,6 +47,7 @@ const ProductFormPage = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
+        if (parseFloat(basePrice) < 0) return;
         setSaving(true);
         try {
             const requestPayload = {
@@ -137,17 +138,21 @@ const ProductFormPage = () => {
                         </label>
                         <input
                             type="number"
-                            className="w-full bg-[#FAF6F0]/40 border border-[#ebdcd0] p-4 rounded-xl text-[#25160F] font-bold focus:ring-4 focus:ring-[#a27b5c]/10 focus:border-[#a27b5c] focus:bg-white outline-none transition-all placeholder:text-stone-300 text-sm"
+                            min="0"
+                            className={`w-full bg-[#FAF6F0]/40 border ${parseFloat(basePrice) < 0 ? 'border-red-500' : 'border-[#ebdcd0]'} p-4 rounded-xl text-[#25160F] font-bold focus:ring-4 focus:ring-[#a27b5c]/10 focus:border-[#a27b5c] focus:bg-white outline-none transition-all placeholder:text-stone-300 text-sm`}
                             value={basePrice}
                             onChange={e => setBasePrice(e.target.value)}
                             placeholder="Ví dụ: 29000, 45000..."
                             required
                         />
+                        {parseFloat(basePrice) < 0 && (
+                            <span className="text-xs text-red-500 font-bold ml-1 block">Giá không được nhỏ hơn 0</span>
+                        )}
                     </div>
 
                     <button
                         type="submit"
-                        disabled={saving}
+                        disabled={saving || parseFloat(basePrice) < 0}
                         className="w-full py-4 bg-[#4a3728] hover:bg-[#35271c] text-white rounded-xl font-bold uppercase tracking-wider hover:shadow-lg hover:shadow-[#4a3728]/20 active:scale-98 transition-all duration-350 disabled:opacity-50 text-sm flex items-center justify-center gap-2"
                     >
                         {saving ? (
