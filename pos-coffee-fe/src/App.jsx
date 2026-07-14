@@ -10,13 +10,29 @@ import VoucherPage from "./features/voucher/pages/VoucherPage";
 import InventoryPage from "./features/inventory/pages/InventoryPage";
 import UpdateStockPage from "./features/inventory/pages/UpdateStockPage";
 import LoginPage from "./features/auth/login/LoginPage";
-import ProtectedRoute from "./features/auth/login/ProtectedRoute";
+import ProtectedRoute, { StaffRoute } from "./features/auth/login/ProtectedRoute";
+import POSPage from "./features/pos/pages/POSPage.jsx";
+import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
+import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
 
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
+
+                {/* Staff routes — separate layout, no admin sidebar */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<StaffRoute />}>
+                        <Route path="/staff" element={<StaffLayout />}>
+                            <Route index element={<Navigate to="pos" replace />} />
+                            <Route path="pos" element={<POSPage />} />
+                            <Route path="orders" element={<StaffOrdersPage />} />
+                        </Route>
+                    </Route>
+                </Route>
+
+                {/* Admin routes — shared layout with sidebar */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<AppLayout />}>
                         <Route
@@ -52,25 +68,7 @@ function App() {
                         />
                         <Route path="/surcharges" element={<SurchargePage />} />
                         <Route path="/vouchers" element={<VoucherPage />} />
-
-                        <Route
-                            path="/orders"
-                            element={
-                                <div className="p-8 text-center text-stone-500 font-black uppercase text-sm tracking-wider">
-                                    Tính năng Quản lý Đơn hàng đang được phát
-                                    triển
-                                </div>
-                            }
-                        />
-                        <Route
-                            path="/staff"
-                            element={
-                                <div className="p-8 text-center text-stone-500 font-black uppercase text-sm tracking-wider">
-                                    Tính năng Quản lý Nhân viên đang được phát
-                                    triển
-                                </div>
-                            }
-                        />
+                        <Route path="/orders" element={<POSPage />} />
                     </Route>
                 </Route>
             </Routes>
