@@ -7,6 +7,7 @@ export const useCurrentUser = () => {
         queryFn: getCurrentUser,
         enabled: Boolean(localStorage.getItem("accessToken")),
         retry: false,
+        select: (res) => res.data,
     });
 };
 
@@ -17,7 +18,10 @@ export const useLogin = () => {
         mutationFn: login,
         onSuccess: (data) => {
             localStorage.setItem("accessToken", data.token);
-            queryClient.setQueryData(["currentUser"], data.user);
+            if (data.user) {
+                localStorage.setItem("currentUser", JSON.stringify(data.user));
+                queryClient.setQueryData(["currentUser"], data.user);
+            }
         },
     });
 };
@@ -29,6 +33,7 @@ export const useLogout = () => {
         mutationFn: logout,
         onSettled: () => {
             localStorage.removeItem("accessToken");
+            localStorage.removeItem("currentUser");
             queryClient.removeQueries({ queryKey: ["currentUser"] });
         },
     });

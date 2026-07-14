@@ -8,11 +8,16 @@ const LoginPage = () => {
     const location = useLocation();
     const loginMutation = useLogin();
     const [form, setForm] = useState({ username: "", password: "" });
-    const redirectTo = location.state?.from?.pathname || "/categories";
     const token = localStorage.getItem("accessToken");
 
     if (token) {
-        return <Navigate to={redirectTo} replace />;
+        try {
+            const cached = JSON.parse(localStorage.getItem("currentUser") || "null");
+            const fallback = cached?.role === "STAFF" ? "/staff/pos" : "/categories";
+            return <Navigate to={location.state?.from?.pathname || fallback} replace />;
+        } catch (_) {
+            return <Navigate to="/categories" replace />;
+        }
     }
 
     const handleChange = (event) => {
@@ -25,7 +30,11 @@ const LoginPage = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         loginMutation.mutate(form, {
-            onSuccess: () => navigate(redirectTo, { replace: true }),
+            onSuccess: (data) => {
+                const role = data?.user?.role;
+                const fallback = role === "STAFF" ? "/staff/pos" : "/categories";
+                navigate(location.state?.from?.pathname || fallback, { replace: true });
+            },
         });
     };
 
