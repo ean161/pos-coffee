@@ -4,7 +4,8 @@ import { usePosMenu } from "../api/usePosMenu.js";
 import { useCreateOrder } from "../api/useCreateOrder.js";
 import CustomizeModal from "../components/CustomizeModal.jsx";
 import CartSidebar from "../components/CartSidebar.jsx";
-
+import { History as HistoryIcon } from "lucide-react";
+import PosHeader from "../../../sharedforstaff/layout/PosHeader.jsx";
 const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
 
@@ -121,57 +122,13 @@ export default function POSPage() {
             {/* Left: Menu area */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top bar */}
-                <div className="bg-white border-b border-stone-200 px-6 py-4">
-                    <div className="flex items-center gap-4 mb-4">
-                        <h1 className="text-2xl font-black text-[#26170f] flex items-center gap-2">
-                            <Coffee size={28} className="text-[#a27b5c]" />
-                            POS Coffee
-                        </h1>
-                        <div className="ml-auto flex items-center gap-2 text-xs text-stone-500">
-                            <UtensilsCrossed size={14} />
-                            <span>Bán hàng</span>
-                        </div>
-                    </div>
-
-                    {/* Search */}
-                    <div className="relative mb-4">
-                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm sản phẩm..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-stone-100 border border-stone-200 focus:outline-none focus:border-[#a27b5c] text-sm font-medium placeholder:text-stone-400"
-                        />
-                    </div>
-
-                    {/* Category tabs */}
-                    <div className="flex gap-2 overflow-x-auto pb-1">
-                        <button
-                            onClick={() => setSelectedCategory("ALL")}
-                            className={`flex-shrink-0 px-5 py-2 rounded-2xl font-bold text-xs transition-all ${
-                                selectedCategory === "ALL"
-                                    ? "bg-[#4a3728] text-white shadow-md"
-                                    : "bg-stone-100 text-stone-500 hover:bg-stone-200"
-                            }`}
-                        >
-                            Tất cả
-                        </button>
-                        {categories.map((cat) => (
-                            <button
-                                key={cat.categoryId || cat.id}
-                                onClick={() => setSelectedCategory(cat.name)}
-                                className={`flex-shrink-0 px-5 py-2 rounded-2xl font-bold text-xs transition-all ${
-                                    selectedCategory === cat.name
-                                        ? "bg-[#4a3728] text-white shadow-md"
-                                        : "bg-stone-100 text-stone-500 hover:bg-stone-200"
-                                }`}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                <PosHeader
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                />
 
                 {/* Product grid */}
                 <div className="flex-1 overflow-y-auto p-6 bg-[#FAF6F0]">

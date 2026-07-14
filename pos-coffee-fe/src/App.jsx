@@ -14,6 +14,7 @@ import ProtectedRoute, { StaffRoute } from "./features/auth/login/ProtectedRoute
 import POSPage from "./features/pos/pages/POSPage.jsx";
 import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
 import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
+import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderFormPage.jsx";
 
 function App() {
     return (
@@ -28,6 +29,10 @@ function App() {
                             <Route index element={<Navigate to="pos" replace />} />
                             <Route path="pos" element={<POSPage />} />
                             <Route path="orders" element={<StaffOrdersPage />} />
+                            <Route
+                                path="sales-history"
+                                element={<HistoryOrderFormPage/>}
+                            />
                         </Route>
                     </Route>
                 </Route>

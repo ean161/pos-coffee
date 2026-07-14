@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orderss")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class    Order {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
