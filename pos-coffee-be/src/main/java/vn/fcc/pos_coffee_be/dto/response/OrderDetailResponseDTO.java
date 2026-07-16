@@ -2,17 +2,14 @@ package vn.fcc.pos_coffee_be.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record OrderResponse(
-        Long orderId,
+public record OrderDetailResponseDTO(
+
         String invoiceNumber,
-        String userId,
-        String userFullName,
+        LocalDateTime orderDate,
         BigDecimal totalAmount,
         BigDecimal discountAmount,
         BigDecimal finalAmount,
-        String paymentMethod,
-        LocalDateTime orderDate,
-        List<OrderItemResponse> items
+        String paymentMethod
+
 ) {}
