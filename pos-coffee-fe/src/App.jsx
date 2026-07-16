@@ -15,6 +15,7 @@ import POSPage from "./features/pos/pages/POSPage.jsx";
 import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
 import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
 import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderFormPage.jsx";
+import TopSellingProductPage from "./features/top-selling-product/pages/TopSellingProductPage.jsx";
 
 function App() {
     return (
@@ -74,6 +75,7 @@ function App() {
                         <Route path="/surcharges" element={<SurchargePage />} />
                         <Route path="/vouchers" element={<VoucherPage />} />
                         <Route path="/orders" element={<POSPage />} />
+                        <Route path="/top-selling" element={<TopSellingProductPage />} />
                     </Route>
                 </Route>
             </Routes>
