@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface StatisticRepository extends JpaRepository<OrderItem, String> {
-    List<OrderItem> findByOrder_OrderDateGreaterThanEqual(LocalDateTime startDate);
+    List<OrderItem> findByOrder_OrderDateBetween(LocalDateTime start, LocalDateTime end);
 }

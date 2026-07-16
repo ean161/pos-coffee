@@ -5,20 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderResponse(
-        String orderId,
-        String staffId,
-        String staffName,
-        String customerName,
-        String customerPhone,
-        BigDecimal subtotal,
-        BigDecimal discountAmount,
-        BigDecimal surchargeAmount,
+        Long orderId,
+        String invoiceNumber,
+        String userId,
+        String userFullName,
         BigDecimal totalAmount,
-        String orderType,
-        String tableNumber,
+        BigDecimal discountAmount,
+        BigDecimal finalAmount,
         String paymentMethod,
-        String status,
-        String notes,
-        LocalDateTime createdAt,
+        LocalDateTime orderDate,
         List<OrderItemResponse> items
 ) {}

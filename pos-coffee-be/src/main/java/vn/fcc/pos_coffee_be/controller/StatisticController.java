@@ -1,5 +1,6 @@
 package vn.fcc.pos_coffee_be.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.fcc.pos_coffee_be.dto.response.*;
@@ -17,12 +18,19 @@ public class StatisticController {
     }
 
     @GetMapping("/top-selling")
-    public List<TopProductResponse> getTopSelling(@RequestParam(defaultValue = "10") int limit) {
-        return statisticService.getTopSellingProducts(limit);
+    public ResponseEntity<Page<TopProductResponse>> getTopSelling(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(statisticService.getTopSellingProducts(page, size));
     }
 
     @GetMapping("/revenue")
-    public ResponseEntity<RevenueStatsResponse> getRevenue(@RequestParam(defaultValue = "month") String period) {
-        return ResponseEntity.ok(statisticService.getRevenueStats(period));
+    public ResponseEntity<RevenueStatsResponse> getRevenue(
+            @RequestParam(defaultValue = "7days", required = false) String period,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
+        return ResponseEntity.ok(statisticService.getRevenueStats(period, year, month));
     }
 }

@@ -1,30 +1,14 @@
 import { NavLink } from 'react-router-dom';
-import {
-    LayoutDashboard,
-    Coffee,
-    LayoutGrid,
-    Tag,
-    Receipt,
-    UsersRound,
-    CupSoda,
-    Coins,
-    Boxes,
-    Monitor,
-    TrendingUp
-} from "lucide-react";
+import { LayoutDashboard, Coffee, LayoutGrid, Tag, CupSoda, Coins, Boxes, TrendingUp } from "lucide-react";
 
 const MENU_ITEMS = [
     { icon: <LayoutDashboard className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Dashboard', path: '/' },
     { icon: <Coffee className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Sản phẩm', path: '/products' },
-    // --- THÊM MỤC THỐNG KÊ MÓN BÁN CHẠY Ở ĐÂY ---
-    { icon: <TrendingUp className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Thống kê món', path: '/top-selling' },
+    { icon: <TrendingUp className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Thống kê', path: '/top-selling' },
     { icon: <LayoutGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Danh mục', path: '/categories' },
     { icon: <CupSoda className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Topping', path: '/toppings' },
     { icon: <Coins className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Phụ thu', path: '/surcharges' },
     { icon: <Tag className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Khuyến mãi', path: '/vouchers' },
-    { icon: <Monitor className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'POS Bán hàng', path: '/orders' },
-    { icon: <Receipt className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Đơn hàng', path: '/orders' },
-    { icon: <UsersRound className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Nhân viên', path: '/staff' },
     { icon: <Boxes className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Tồn kho', path: '/admin/inventory' },
 ];
 
@@ -41,7 +25,7 @@ const SideBar = ({ isOpen }) => {
                 </div>
             </div>
 
-            <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <nav className="flex-1 px-4 py-6 space-y-2">
                 {MENU_ITEMS.map((item, index) => (
                     <NavLink
                         key={index}

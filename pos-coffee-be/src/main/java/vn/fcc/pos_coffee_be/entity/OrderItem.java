@@ -22,7 +22,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    private Orders order;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -61,9 +61,9 @@ public class OrderItem {
 
     @ManyToMany
     @JoinTable(
-        name = "order_item_toppings",
-        joinColumns = @JoinColumn(name = "order_item_id"),
-        inverseJoinColumns = @JoinColumn(name = "topping_id")
+            name = "order_item_toppings",
+            joinColumns = @JoinColumn(name = "order_item_id"),
+            inverseJoinColumns = @JoinColumn(name = "topping_id")
     )
     private List<Topping> toppings = new ArrayList<>();
 }

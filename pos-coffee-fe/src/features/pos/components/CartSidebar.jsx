@@ -198,7 +198,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                                     >
                                         -
                                     </button>
-                                    <span className="font-bold text-sm w-5 text-center">{item.quantity}</span>
+                                    <span className="font-bold text-sm text-black w-5 text-center">{item.quantity}</span>
                                     <button
                                         onClick={() => onUpdateQuantity(idx, item.quantity + 1)}
                                         className="px-2 py-1 text-xs font-bold text-stone-500 hover:bg-stone-100 rounded-r-xl"
@@ -310,7 +310,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                                     placeholder="Nhập mã voucher"
                                     value={voucherCode}
                                     onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                                    className="flex-1 text-xs px-3 py-2 rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-[#a27b5c] font-bold uppercase tracking-wider"
+                                    className="flex-1 text-xs text-black px-3 py-2 rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-[#a27b5c] font-bold uppercase tracking-wider"
                                 />
                                 <button
                                     onClick={handleApplyVoucher}

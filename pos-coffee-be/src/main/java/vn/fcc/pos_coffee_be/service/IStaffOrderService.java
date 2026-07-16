@@ -8,5 +8,5 @@ public interface IStaffOrderService {
 
     List<OrderResponse> getMyOrders();
 
-    OrderResponse updateOrderStatus(String orderId, String status);
+    OrderResponse updateOrderStatus(Long orderId);
 }
