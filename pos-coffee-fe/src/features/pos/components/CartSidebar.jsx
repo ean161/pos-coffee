@@ -310,7 +310,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                                     placeholder="Nhập mã voucher"
                                     value={voucherCode}
                                     onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
-                                    className="flex-1 text-xs px-3 py-2 rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-[#a27b5c] font-bold uppercase tracking-wider"
+                                    className="flex-1 text-xs text-black px-3 py-2 rounded-xl border border-stone-200 bg-white focus:outline-none focus:border-[#a27b5c] font-bold uppercase tracking-wider"
                                 />
                                 <button
                                     onClick={handleApplyVoucher}
