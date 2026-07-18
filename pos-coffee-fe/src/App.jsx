@@ -17,6 +17,7 @@ import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
 import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderFormPage.jsx";
 import StatisticPage from "./features/statistics/pages/StatisticPage.jsx";
 import EmployeePage from "./features/employee/pages/EmployeePage";
+import ShiftsPage from "./features/shift/pages/ShiftsPage";
 
 function App() {
     return (
@@ -78,6 +79,7 @@ function App() {
                         <Route path="/orders" element={<POSPage />} />
                         <Route path="/top-selling" element={<StatisticPage />} />
                         <Route path="/employees" element={<EmployeePage />} />
+                        <Route path="/shifts" element={<ShiftsPage />} />
                     </Route>
                 </Route>
             </Routes>
