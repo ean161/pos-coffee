@@ -16,6 +16,7 @@ import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
 import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
 import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderFormPage.jsx";
 import StatisticPage from "./features/statistics/pages/StatisticPage.jsx";
+import EmployeePage from "./features/employee/pages/EmployeePage";
 
 function App() {
     return (
@@ -76,6 +77,7 @@ function App() {
                         <Route path="/vouchers" element={<VoucherPage />} />
                         <Route path="/orders" element={<POSPage />} />
                         <Route path="/top-selling" element={<StatisticPage />} />
+                        <Route path="/employees" element={<EmployeePage />} />
                     </Route>
                 </Route>
             </Routes>
