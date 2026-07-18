@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Coffee, LayoutGrid, Tag, CupSoda, Coins, Boxes, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Coffee, LayoutGrid, Tag, CupSoda, Coins, Boxes, TrendingUp, Users } from "lucide-react";
 
 const MENU_ITEMS = [
     { icon: <LayoutDashboard className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Dashboard', path: '/' },
@@ -10,6 +10,7 @@ const MENU_ITEMS = [
     { icon: <Coins className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Phụ thu', path: '/surcharges' },
     { icon: <Tag className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Khuyến mãi', path: '/vouchers' },
     { icon: <Boxes className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Tồn kho', path: '/admin/inventory' },
+    { icon: <Users className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Nhân viên', path: '/employees' },
 ];
 
 const SideBar = ({ isOpen }) => {
