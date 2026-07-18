@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Users, Loader2, X, UserPlus } from 'lucide-react';
 import employeeApi from "../api/employeeApi";
+import { parseWageInput } from "../../../shared/utils/formatters";
 
-const EmployeeCreateModal = ({ isOpen, onClose, onSuccess }) => {
+const EmployeeCreateModal = ({ isOpen, onClose, onSuccess, onRefresh }) => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
@@ -33,6 +34,7 @@ const EmployeeCreateModal = ({ isOpen, onClose, onSuccess }) => {
     const handleClose = () => {
         reset();
         onClose();
+        onRefresh?.();
     };
 
     const handleCreate = async (e) => {
@@ -47,7 +49,7 @@ const EmployeeCreateModal = ({ isOpen, onClose, onSuccess }) => {
                 role: formData.role,
                 status: formData.status,
                 phoneNumber: formData.phoneNumber.trim() || null,
-                hourlyWage: parseFloat(formData.hourlyWage),
+                hourlyWage: parseWageInput(formData.hourlyWage),
                 hireDate: new Date(formData.hireDate).toISOString()
             };
             await employeeApi.create(payload);
@@ -62,10 +64,25 @@ const EmployeeCreateModal = ({ isOpen, onClose, onSuccess }) => {
         }
     };
 
+    useEffect(() => {
+        if (!isOpen) return undefined;
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') handleClose();
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onMouseDown={(e) => {
+                if (e.target === e.currentTarget) handleClose();
+            }}
+        >
             <div className="bg-white rounded-2xl border border-[#ebdcd0] max-w-lg w-full overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#a27b5c]" />
 

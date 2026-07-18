@@ -23,6 +23,10 @@ const employeeApi = {
 
     updateWage: (id, hourlyWage) => {
         return axiosClient.patch(`/employees/${id}/wage`, { hourlyWage });
+    },
+
+    updateStatus: (id, status) => {
+        return axiosClient.patch(`/employees/${id}/status`, { status });
     }
 };
 

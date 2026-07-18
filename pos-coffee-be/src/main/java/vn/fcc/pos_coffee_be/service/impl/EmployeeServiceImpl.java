@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeCreateRequest;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeUpdateRequest;
 import vn.fcc.pos_coffee_be.dto.request.UpdateHourlyWageRequest;
+import vn.fcc.pos_coffee_be.dto.request.UpdateUserStatusRequest;
 import vn.fcc.pos_coffee_be.dto.response.EmployeeResponse;
 import vn.fcc.pos_coffee_be.entity.Employee;
 import vn.fcc.pos_coffee_be.entity.User;
@@ -98,6 +99,19 @@ public class EmployeeServiceImpl implements IEmployeeService {
         employee.setHourlyWage(request.hourlyWage());
         Employee updated = employeeRepository.save(employee);
         return toResponse(updated);
+    }
+
+    @Override
+    public EmployeeResponse updateUserStatus(Long id, UpdateUserStatusRequest request) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+
+        User user = userRepository.findById(employee.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + employee.getUserId()));
+
+        user.setStatus(request.status());
+        User savedUser = userRepository.save(user);
+        return toResponse(employee, savedUser);
     }
 
     private EmployeeResponse toResponse(Employee employee) {

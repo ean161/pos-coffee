@@ -3,6 +3,7 @@ package vn.fcc.pos_coffee_be.service;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeCreateRequest;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeUpdateRequest;
 import vn.fcc.pos_coffee_be.dto.request.UpdateHourlyWageRequest;
+import vn.fcc.pos_coffee_be.dto.request.UpdateUserStatusRequest;
 import vn.fcc.pos_coffee_be.dto.response.EmployeeResponse;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface IEmployeeService {
     void deleteEmployee(Long id);
 
     EmployeeResponse updateHourlyWage(Long id, UpdateHourlyWageRequest request);
+
+    EmployeeResponse updateUserStatus(Long id, UpdateUserStatusRequest request);
 }

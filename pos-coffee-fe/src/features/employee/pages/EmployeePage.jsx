@@ -22,7 +22,19 @@ const EmployeePage = () => {
     };
 
     useEffect(() => {
-        fetchEmployees();
+        let cancelled = false;
+        (async () => {
+            setLoading(true);
+            try {
+                const res = await employeeApi.getAll();
+                if (!cancelled) setEmployees(res.data || []);
+            } catch (error) {
+                console.error("Lỗi:", error);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
+        return () => { cancelled = true; };
     }, []);
 
     return (
@@ -66,6 +78,7 @@ const EmployeePage = () => {
                 isOpen={createModalOpen}
                 onClose={() => setCreateModalOpen(false)}
                 onSuccess={fetchEmployees}
+                onRefresh={fetchEmployees}
             />
         </div>
     );
