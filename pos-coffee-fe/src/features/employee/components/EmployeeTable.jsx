@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FolderOpen, Eye, SquarePen, Trash2 } from "lucide-react";
 import axiosClient from "../../../shared/axios/axiosClient.js";
 import EmployeeDetailModal from "./EmployeeDetailModal";
 import ConfirmModal from "../../../shared/components/ConfirmModal";
+import { formatVND } from "../../../shared/utils/formatters";
 
 const EmployeeTable = ({ data, onRefresh }) => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -11,6 +12,21 @@ const EmployeeTable = ({ data, onRefresh }) => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [employeeToDelete, setEmployeeToDelete] = useState(null);
     const [deleting, setDeleting] = useState(false);
+
+    const closeDetailModal = useCallback(() => {
+        setDetailModalOpen(false);
+        onRefresh?.();
+    }, [onRefresh]);
+
+    const closeEditModal = useCallback(() => {
+        setEditModalOpen(false);
+        onRefresh?.();
+    }, [onRefresh]);
+
+    const closeDeleteModal = useCallback(() => {
+        setDeleteModalOpen(false);
+        onRefresh?.();
+    }, [onRefresh]);
 
     const handleOpenDetail = (employee) => {
         setSelectedEmployee(employee);
@@ -34,7 +50,7 @@ const EmployeeTable = ({ data, onRefresh }) => {
             await axiosClient.delete(`/employees/${employeeToDelete.id}`);
             setDeleteModalOpen(false);
             setEmployeeToDelete(null);
-            onRefresh();
+            onRefresh?.();
         } catch (error) {
             console.error("Lỗi xóa:", error);
         } finally {
@@ -42,9 +58,7 @@ const EmployeeTable = ({ data, onRefresh }) => {
         }
     };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-    };
+    const formatCurrency = (amount) => formatVND(amount);
 
     const formatDate = (dateString) => {
         if (!dateString) return "-";
@@ -154,7 +168,7 @@ const EmployeeTable = ({ data, onRefresh }) => {
 
             <EmployeeDetailModal
                 isOpen={detailModalOpen}
-                onClose={() => setDetailModalOpen(false)}
+                onClose={closeDetailModal}
                 employee={selectedEmployee}
                 onEdit={() => {
                     setDetailModalOpen(false);
@@ -164,7 +178,7 @@ const EmployeeTable = ({ data, onRefresh }) => {
 
             <EmployeeDetailModal
                 isOpen={editModalOpen}
-                onClose={() => setEditModalOpen(false)}
+                onClose={closeEditModal}
                 employee={selectedEmployee}
                 isEdit={true}
                 onRefresh={onRefresh}
@@ -176,7 +190,7 @@ const EmployeeTable = ({ data, onRefresh }) => {
 
             <ConfirmModal
                 isOpen={deleteModalOpen}
-                onClose={() => setDeleteModalOpen(false)}
+                onClose={closeDeleteModal}
                 onConfirm={handleDelete}
                 title="Xóa nhân viên"
                 message={`Bạn có chắc muốn xóa hồ sơ nhân viên "${employeeToDelete?.fullName}"? Hành động này không thể hoàn tác.`}

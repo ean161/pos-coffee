@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeCreateRequest;
 import vn.fcc.pos_coffee_be.dto.request.EmployeeUpdateRequest;
 import vn.fcc.pos_coffee_be.dto.request.UpdateHourlyWageRequest;
+import vn.fcc.pos_coffee_be.dto.request.UpdateUserStatusRequest;
 import vn.fcc.pos_coffee_be.dto.response.EmployeeResponse;
 import vn.fcc.pos_coffee_be.service.IEmployeeService;
 
@@ -54,5 +55,12 @@ public class EmployeeController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateHourlyWageRequest request) {
         return ResponseEntity.ok(employeeService.updateHourlyWage(id, request));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<EmployeeResponse> updateUserStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserStatusRequest request) {
+        return ResponseEntity.ok(employeeService.updateUserStatus(id, request));
     }
 }
