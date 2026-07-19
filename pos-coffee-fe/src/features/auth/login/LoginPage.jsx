@@ -45,9 +45,9 @@ const LoginPage = () => {
                 className="w-full max-w-sm bg-white border border-stone-200 rounded-lg p-6 shadow-sm"
             >
                 <h1 className="text-xl font-bold text-stone-900 mb-5 flex space-x-2 items-center">
-					<div className="group bg-gradient-to-tr from-[#a27b5c] to-[#c5a880] p-3 rounded-2xl shadow-lg shadow-[#a27b5c]/20 transition-all duration-500 hover:rotate-12 hover:scale-105 w-fit">
-						<Coffee className="w-5 h-5 text-[#fbf9f6] transition-transform duration-700 group-hover:scale-110" />
-					</div>
+                    <div className="group bg-gradient-to-tr from-[#a27b5c] to-[#c5a880] p-3 rounded-2xl shadow-lg shadow-[#a27b5c]/20 transition-all duration-500 hover:rotate-12 hover:scale-105 w-fit">
+                        <Coffee className="w-5 h-5 text-[#fbf9f6] transition-transform duration-700 group-hover:scale-110" />
+                    </div>
                     <span>Đăng nhập</span>
                 </h1>
 

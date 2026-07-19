@@ -272,52 +272,52 @@ const PayrollPage = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm min-w-[900px]">
                             <thead>
-                                <tr className="bg-[#FAF6F0]/60 border-b border-[#ebdcd0] text-[11px] text-[#a27b5c] uppercase font-bold tracking-widest">
-                                    <th className="px-4 py-4 text-left">Mã NV</th>
-                                    <th className="px-4 py-4 text-left">Nhân viên</th>
-                                    <th className="px-4 py-4 text-left">SĐT</th>
-                                    <th className="px-4 py-4 text-center">Số ca hợp lệ</th>
-                                    <th className="px-4 py-4 text-right">Tổng giờ</th>
-                                    <th className="px-4 py-4 text-right">Lương/giờ</th>
-                                    <th className="px-4 py-4 text-right">Thành tiền</th>
-                                    <th className="px-4 py-4 text-center">Chi tiết</th>
-                                </tr>
+                            <tr className="bg-[#FAF6F0]/60 border-b border-[#ebdcd0] text-[11px] text-[#a27b5c] uppercase font-bold tracking-widest">
+                                <th className="px-4 py-4 text-left">Mã NV</th>
+                                <th className="px-4 py-4 text-left">Nhân viên</th>
+                                <th className="px-4 py-4 text-left">SĐT</th>
+                                <th className="px-4 py-4 text-center">Số ca hợp lệ</th>
+                                <th className="px-4 py-4 text-right">Tổng giờ</th>
+                                <th className="px-4 py-4 text-right">Lương/giờ</th>
+                                <th className="px-4 py-4 text-right">Thành tiền</th>
+                                <th className="px-4 py-4 text-center">Chi tiết</th>
+                            </tr>
                             </thead>
                             <tbody className="divide-y divide-[#f7f0e9]">
-                                {filteredSummary.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={8} className="px-6 py-12 text-center text-stone-400">
-                                            {summary.length === 0 ? 'Chưa có dữ liệu chấm công trong khoảng này.' : 'Không tìm thấy nhân viên phù hợp.'}
+                            {filteredSummary.length === 0 ? (
+                                <tr>
+                                    <td colSpan={8} className="px-6 py-12 text-center text-stone-400">
+                                        {summary.length === 0 ? 'Chưa có dữ liệu chấm công trong khoảng này.' : 'Không tìm thấy nhân viên phù hợp.'}
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredSummary.map((row) => (
+                                    <tr key={row.employeeId} className="hover:bg-[#fcf8f2] transition-colors">
+                                        <td className="px-4 py-4 font-bold text-[#26170f]">{row.employeeCode}</td>
+                                        <td className="px-4 py-4">
+                                            <div className="font-bold text-[#26170f]">{row.fullName}</div>
+                                            <div className="text-xs text-stone-500">@{row.username}</div>
                                         </td>
-                                    </tr>
-                                ) : (
-                                    filteredSummary.map((row) => (
-                                        <tr key={row.employeeId} className="hover:bg-[#fcf8f2] transition-colors">
-                                            <td className="px-4 py-4 font-bold text-[#26170f]">{row.employeeCode}</td>
-                                            <td className="px-4 py-4">
-                                                <div className="font-bold text-[#26170f]">{row.fullName}</div>
-                                                <div className="text-xs text-stone-500">@{row.username}</div>
-                                            </td>
-                                            <td className="px-4 py-4 text-stone-700">{row.phoneNumber || '—'}</td>
-                                            <td className="px-4 py-4 text-center">
+                                        <td className="px-4 py-4 text-stone-700">{row.phoneNumber || '—'}</td>
+                                        <td className="px-4 py-4 text-center">
                                                 <span className="px-2 py-0.5 bg-[#a27b5c]/10 text-[#4a3728] rounded-md font-bold text-xs">
                                                     {row.validShiftCount} ca
                                                 </span>
-                                            </td>
-                                            <td className="px-4 py-4 text-right font-bold text-[#26170f]">{formatCurrency(row.totalHours)}</td>
-                                            <td className="px-4 py-4 text-right text-stone-700">{formatCurrency(row.hourlyWage)} đ</td>
-                                            <td className="px-4 py-4 text-right font-black text-[#4a3728]">{formatCurrency(row.grossSalary)} đ</td>
-                                            <td className="px-4 py-4 text-center">
-                                                <button
-                                                    onClick={() => openDetail(row)}
-                                                    className="px-3 py-1.5 text-xs font-bold text-[#4a3728] bg-[#FAF6F0] hover:bg-[#f0ebe5] border border-[#e5dcd3] rounded-lg"
-                                                >
-                                                    Xem
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
+                                        </td>
+                                        <td className="px-4 py-4 text-right font-bold text-[#26170f]">{formatCurrency(row.totalHours)}</td>
+                                        <td className="px-4 py-4 text-right text-stone-700">{formatCurrency(row.hourlyWage)} đ</td>
+                                        <td className="px-4 py-4 text-right font-black text-[#4a3728]">{formatCurrency(row.grossSalary)} đ</td>
+                                        <td className="px-4 py-4 text-center">
+                                            <button
+                                                onClick={() => openDetail(row)}
+                                                className="px-3 py-1.5 text-xs font-bold text-[#4a3728] bg-[#FAF6F0] hover:bg-[#f0ebe5] border border-[#e5dcd3] rounded-lg"
+                                            >
+                                                Xem
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                             </tbody>
                         </table>
                     </div>
@@ -364,70 +364,70 @@ const PayrollPage = () => {
                             ) : (
                                 <table className="w-full text-sm">
                                     <thead className="text-[11px] uppercase text-stone-500 font-bold tracking-widest">
-                                        <tr className="border-b border-[#f7f0e9]">
-                                            <th className="py-2 text-left">Clock-in</th>
-                                            <th className="py-2 text-left">Clock-out</th>
-                                            <th className="py-2 text-right">Giờ</th>
-                                            <th className="py-2 text-center">Trạng thái</th>
-                                            <th className="py-2 text-right"></th>
-                                        </tr>
+                                    <tr className="border-b border-[#f7f0e9]">
+                                        <th className="py-2 text-left">Clock-in</th>
+                                        <th className="py-2 text-left">Clock-out</th>
+                                        <th className="py-2 text-right">Giờ</th>
+                                        <th className="py-2 text-center">Trạng thái</th>
+                                        <th className="py-2 text-right"></th>
+                                    </tr>
                                     </thead>
                                     <tbody className="divide-y divide-[#f7f0e9]">
-                                        {detailEmployee.entries.map((entry) => {
-                                            const abnormal = (entry.status || '').toUpperCase() === 'ABNORMAL';
-                                            return (
-                                                <tr key={entry.timeLogId}>
-                                                    <td className="py-2.5 font-medium text-[#26170f]">
-                                                        {formatDateTime(entry.clockInTime)}
-                                                    </td>
-                                                    <td className="py-2.5">
-                                                        {editingEntry?.timeLogId === entry.timeLogId ? (
-                                                            <input
-                                                                type="datetime-local"
-                                                                value={editClockOut}
-                                                                onChange={(e) => setEditClockOut(e.target.value)}
-                                                                className="px-2 py-1 border border-[#ebdcd0] rounded-lg text-xs"
-                                                            />
-                                                        ) : (
-                                                            <span className={entry.clockOutTime ? 'text-stone-700' : 'text-red-600 italic'}>
+                                    {detailEmployee.entries.map((entry) => {
+                                        const abnormal = (entry.status || '').toUpperCase() === 'ABNORMAL';
+                                        return (
+                                            <tr key={entry.timeLogId}>
+                                                <td className="py-2.5 font-medium text-[#26170f]">
+                                                    {formatDateTime(entry.clockInTime)}
+                                                </td>
+                                                <td className="py-2.5">
+                                                    {editingEntry?.timeLogId === entry.timeLogId ? (
+                                                        <input
+                                                            type="datetime-local"
+                                                            value={editClockOut}
+                                                            onChange={(e) => setEditClockOut(e.target.value)}
+                                                            className="px-2 py-1 border border-[#ebdcd0] rounded-lg text-xs"
+                                                        />
+                                                    ) : (
+                                                        <span className={entry.clockOutTime ? 'text-stone-700' : 'text-red-600 italic'}>
                                                                 {entry.clockOutTime ? formatDateTime(entry.clockOutTime) : 'Chưa chốt'}
                                                             </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="py-2.5 text-right font-bold text-[#26170f]">{formatCurrency(entry.totalHours)}</td>
-                                                    <td className="py-2.5 text-center">
-                                                        {abnormal ? (
-                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 rounded-md">
+                                                    )}
+                                                </td>
+                                                <td className="py-2.5 text-right font-bold text-[#26170f]">{formatCurrency(entry.totalHours)}</td>
+                                                <td className="py-2.5 text-center">
+                                                    {abnormal ? (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 rounded-md">
                                                                 <AlertTriangle size={12} /> Bất thường
                                                             </span>
-                                                        ) : (
-                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md">
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md">
                                                                 Hợp lệ
                                                             </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="py-2.5 text-right">
-                                                        {editingEntry?.timeLogId === entry.timeLogId ? (
-                                                            <div className="flex justify-end gap-1">
-                                                                <button onClick={saveEdit} className="px-2 py-1 text-xs font-bold bg-[#4a3728] text-white rounded-md">
-                                                                    Lưu
-                                                                </button>
-                                                                <button onClick={() => setEditingEntry(null)} className="px-2 py-1 text-xs font-bold bg-stone-100 text-stone-700 rounded-md">
-                                                                    Hủy
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            <button
-                                                                onClick={() => beginEdit(entry)}
-                                                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-[#4a3728] bg-[#FAF6F0] border border-[#e5dcd3] rounded-md hover:bg-[#f0ebe5]"
-                                                            >
-                                                                <Clock size={12} /> {entry.clockOutTime ? 'Sửa' : 'Chốt giờ'}
+                                                    )}
+                                                </td>
+                                                <td className="py-2.5 text-right">
+                                                    {editingEntry?.timeLogId === entry.timeLogId ? (
+                                                        <div className="flex justify-end gap-1">
+                                                            <button onClick={saveEdit} className="px-2 py-1 text-xs font-bold bg-[#4a3728] text-white rounded-md">
+                                                                Lưu
                                                             </button>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
+                                                            <button onClick={() => setEditingEntry(null)} className="px-2 py-1 text-xs font-bold bg-stone-100 text-stone-700 rounded-md">
+                                                                Hủy
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => beginEdit(entry)}
+                                                            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-[#4a3728] bg-[#FAF6F0] border border-[#e5dcd3] rounded-md hover:bg-[#f0ebe5]"
+                                                        >
+                                                            <Clock size={12} /> {entry.clockOutTime ? 'Sửa' : 'Chốt giờ'}
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                     </tbody>
                                 </table>
                             )}
