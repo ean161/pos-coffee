@@ -16,7 +16,9 @@ export default function OrderRow({order}){
                     : 0} đ
             </td>
 
-            <td className="p-4 text-stone-700">{order.orderDate}</td>
+            <td className="p-4 text-stone-700">
+                {new Date(order.orderDate).toLocaleString("vi-VN")}
+            </td>
 
             <td className="p-4 text-stone-700">
 

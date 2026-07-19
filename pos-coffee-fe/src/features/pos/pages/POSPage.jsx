@@ -8,6 +8,8 @@ import { History as HistoryIcon } from "lucide-react";
 import PosHeader from "../../../sharedforstaff/layout/PosHeader.jsx";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../../shared/axios/axiosClient";
+import CloseShiftModal from "../../historyOrders/components/CloseShiftModal.jsx";
+import OpenShiftModal from "../../historyOrders/components/OpenShiftModal.jsx";
 const formatPrice = (price) =>
 
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
@@ -18,6 +20,10 @@ export default function POSPage() {
 
     const navigate = useNavigate();
     const [checkingShift, setCheckingShift] = useState(true);
+    const [shiftOpened, setShiftOpened] = useState(false);
+    const [shiftInfo, setShiftInfo] = useState(null);
+    const [openShiftModal,setOpenShiftModal]=useState(false);
+
 
     //--------------------------------/
 
@@ -49,18 +55,19 @@ export default function POSPage() {
 
     const checkCurrentShift = async () => {
         try {
+
             const res = await axiosClient.get("/shifts/is-open");
 
-            if (!res.data) {
-                navigate("/shift/open");
-                return;
-            }
+            setShiftInfo(res.data);
+            setShiftOpened(res.data.opened);
 
+        } catch (e) {
+            console.error(e);
+        } finally {
             setCheckingShift(false);
-        } catch (error) {
-            console.error(error);
         }
     };
+    const [closeShiftModal, setCloseShiftModal] = useState(false);
 
     const handleAddToCart = (item) => {
         setCart((prev) => [...prev, item]);
@@ -166,10 +173,60 @@ export default function POSPage() {
                     categories={categories}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
+                    shiftOpened={shiftOpened}
+                    onOpenShift={() => setOpenShiftModal(true)}
+                    onCloseShift={() => setCloseShiftModal(true)}
                 />
 
                 {/* Product grid */}
-                <div className="flex-1 overflow-y-auto p-6 bg-[#FAF6F0]">
+                <div className="relative  flex-1 overflow-y-auto p-6 bg-[#FAF6F0]">
+                    {!shiftOpened && (
+                        <div className="absolute inset-0 z-20 bg-white/70 backdrop-blur-sm flex items-center justify-center">
+                            <div className="bg-white rounded-3xl shadow-xl p-8 text-center max-w-md">
+
+                                <Coffee
+                                    size={56}
+                                    className="mx-auto text-[#a27b5c] mb-4"
+                                />
+
+                                {/* Không được phân ca */}
+                                {!shiftInfo?.assigned ? (
+                                    <>
+                                        <h2 className="text-3xl font-bold text-red-600">
+                                            Không có ca làm
+                                        </h2>
+
+                                        <p className="mt-3 text-stone-500">
+                                            {shiftInfo?.message}
+                                        </p>
+                                    </>
+                                ) : !shiftInfo?.inShiftTime ? (
+                                    <>
+                                        <h2 className="text-3xl font-bold text-yellow-600">
+                                            Chưa tới giờ làm
+                                        </h2>
+
+                                        <p className="mt-3 text-stone-500">
+                                            {shiftInfo?.message}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h2 className="text-3xl font-bold text-[#26170f]">
+                                            Chưa mở ca
+                                        </h2>
+
+                                        <p className="mt-3 text-stone-500">
+                                            Bạn đã được phân ca.
+                                            <br />
+                                            Hãy bấm <b>Mở ca</b> ở phía trên để bắt đầu bán hàng.
+                                        </p>
+                                    </>
+                                )}
+
+                            </div>
+                        </div>
+                    )}
                     {filteredProducts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-stone-400">
                             <CupSoda size={64} className="mb-3 opacity-20" />
@@ -180,9 +237,15 @@ export default function POSPage() {
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             {filteredProducts.map((product) => (
                                 <button
-                                    key={product.productId || product.id}
+                                    key={product.productId}
+                                    disabled={!shiftOpened}
                                     onClick={() => setSelectedProduct(product)}
-                                    className="group bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left"
+                                    className={`group rounded-2xl p-4 shadow-sm border
+        ${
+                                        shiftOpened
+                                            ? "bg-white hover:shadow-xl hover:-translate-y-1"
+                                            : "bg-stone-100 opacity-60 cursor-not-allowed"
+                                    }`}
                                 >
                                     <div className="w-full h-28 rounded-xl bg-gradient-to-br from-[#f5ece1] to-[#efe6dc] flex items-center justify-center mb-3 overflow-hidden">
                                         <Coffee size={40} className="text-[#a27b5c] opacity-40 group-hover:opacity-70 transition-opacity" />
@@ -196,18 +259,40 @@ export default function POSPage() {
                     )}
                 </div>
             </div>
-
-            {/* Right: Cart sidebar */}
-            <CartSidebar
-                cart={cart}
-                onRemoveItem={handleRemoveItem}
-                onUpdateQuantity={handleUpdateQuantity}
-                onPlaceOrder={handlePlaceOrder}
-                isSubmitting={createOrderMutation.isPending}
+            <OpenShiftModal
+                open={openShiftModal}
+                onClose={() => setOpenShiftModal(false)}
+                onSuccess={() => {
+                    setOpenShiftModal(false);
+                    checkCurrentShift();
+                }}
+            />
+            <CloseShiftModal
+                open={closeShiftModal}
+                onClose={() => setCloseShiftModal(false)}
+                onSuccess={() => {
+                    setCloseShiftModal(false);
+                    checkCurrentShift(); // cập nhật lại trạng thái ca
+                }}
             />
 
+            {/* Right: Cart sidebar */}
+            {shiftOpened && (
+                <div
+                    className={!shiftOpened ? "pointer-events-none opacity-40" : ""}
+                >
+                    <CartSidebar
+                        cart={cart}
+                        onRemoveItem={handleRemoveItem}
+                        onUpdateQuantity={handleUpdateQuantity}
+                        onPlaceOrder={handlePlaceOrder}
+                        isSubmitting={createOrderMutation.isPending}
+                    />
+                </div>
+            )}
+
             {/* Customize Modal */}
-            {selectedProduct && (
+            {shiftOpened && selectedProduct && (
                 <CustomizeModal
                     product={selectedProduct}
                     variants={selectedProduct.variants || []}
