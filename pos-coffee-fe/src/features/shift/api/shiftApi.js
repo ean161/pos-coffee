@@ -1,21 +1,27 @@
 import axiosClient from "../../../shared/axios/axiosClient.js";
 
 const shiftApi = {
-    getSlots: () => {
-        return axiosClient.get("/shift-assignments/slots");
-    },
+    // ───── ShiftSlot CRUD ─────
+    getSlots: (from, to) =>
+        axiosClient.get("/shift-assignments/slots", { params: { from, to } }),
 
-    getInRange: (from, to) => {
-        return axiosClient.get("/shift-assignments", { params: { from, to } });
-    },
+    createSlot: (data) => axiosClient.post("/shift-assignments/slots", data),
 
-    assign: (data) => {
-        return axiosClient.post("/shift-assignments", data);
-    },
+    updateSlot: (id, data) => axiosClient.put(`/shift-assignments/slots/${id}`, data),
 
-    remove: (id) => {
-        return axiosClient.delete(`/shift-assignments/${id}`);
-    }
+    deleteSlot: (id) => axiosClient.delete(`/shift-assignments/slots/${id}`),
+
+    seedDefaultSlots: (days = 7) =>
+        axiosClient.post(`/shift-assignments/slots/seed`, null, { params: { days } }),
+
+    // ───── ShiftAssignment ─────
+    getInRange: (from, to) =>
+        axiosClient.get("/shift-assignments", { params: { from, to } }),
+
+    /** data: { slotId, employeeUserIds: string[], workDate, note? } */
+    assign: (data) => axiosClient.post("/shift-assignments", data),
+
+    remove: (id) => axiosClient.delete(`/shift-assignments/${id}`),
 };
 
 export default shiftApi;

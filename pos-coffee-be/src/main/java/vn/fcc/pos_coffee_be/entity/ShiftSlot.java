@@ -6,10 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "shift_slots")
+@Table(
+    name = "shift_slots",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_shift_slot_name_workdate", columnNames = {"name", "work_date"})
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,4 +37,8 @@ public class ShiftSlot {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    /** Ngày cụ thể của slot. Slot chỉ hiển thị trên cột của workDate này. */
+    @Column(name = "work_date", nullable = false)
+    private LocalDate workDate;
 }

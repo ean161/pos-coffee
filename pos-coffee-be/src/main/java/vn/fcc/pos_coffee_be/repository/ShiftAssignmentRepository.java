@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.fcc.pos_coffee_be.entity.ShiftAssignment;
-import vn.fcc.pos_coffee_be.entity.Shifts;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +14,8 @@ import java.util.Optional;
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
 
     List<ShiftAssignment> findByWorkDateBetween(LocalDate from, LocalDate to);
+
+    List<ShiftAssignment> findBySlot_Id(Long slotId);
 
     boolean existsBySlot_IdAndEmployeeUserIdAndWorkDate(Long slotId, String employeeUserId, LocalDate workDate);
 
