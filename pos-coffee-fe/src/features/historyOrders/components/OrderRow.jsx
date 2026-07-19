@@ -1,13 +1,14 @@
 import { Eye } from "lucide-react";
 
-export default function OrderRow({order}){
+
+export default function OrderRow({order, onView }){
 
     return(
 
         <tr className="border-b hover:bg-stone-50">
 
             <td className="p-4 text-stone-700">{order.invoiceNumber}</td>
-            
+
 
 
             <td className="p-4 text-stone-700">
@@ -22,7 +23,9 @@ export default function OrderRow({order}){
 
             <td className="p-4 text-stone-700">
 
-                <button className="p-2 rounded-lg hover:bg-stone-200">
+                <button className="p-2 rounded-lg hover:bg-stone-200"
+                        onClick={() => onView(order.id)}>
+
 
                     <Eye size={18}/>
 
