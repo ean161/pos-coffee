@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import { Search, Coffee, LayoutGrid, UtensilsCrossed, Loader2, CupSoda } from "lucide-react";
 import { usePosMenu } from "../api/usePosMenu.js";
 import { useCreateOrder } from "../api/useCreateOrder.js";
@@ -6,10 +6,22 @@ import CustomizeModal from "../components/CustomizeModal.jsx";
 import CartSidebar from "../components/CartSidebar.jsx";
 import { History as HistoryIcon } from "lucide-react";
 import PosHeader from "../../../sharedforstaff/layout/PosHeader.jsx";
+import { useNavigate } from "react-router-dom";
+import axiosClient from "../../../shared/axios/axiosClient";
 const formatPrice = (price) =>
+
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
 
 export default function POSPage() {
+
+    //----------check ca----------------/
+
+    const navigate = useNavigate();
+    const [checkingShift, setCheckingShift] = useState(true);
+
+    //--------------------------------/
+
+
     const { data: menuData, isLoading, error } = usePosMenu();
     const createOrderMutation = useCreateOrder();
 
@@ -30,6 +42,25 @@ export default function POSPage() {
         const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchCategory && matchSearch;
     });
+
+    useEffect(() => {
+        checkCurrentShift();
+    }, []);
+
+    const checkCurrentShift = async () => {
+        try {
+            const res = await axiosClient.get("/shifts/is-open");
+
+            if (!res.data) {
+                navigate("/shift/open");
+                return;
+            }
+
+            setCheckingShift(false);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleAddToCart = (item) => {
         setCart((prev) => [...prev, item]);
@@ -99,6 +130,13 @@ export default function POSPage() {
         }
     };
 
+    if (checkingShift) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                Đang kiểm tra ca làm việc...
+            </div>
+        );
+    }
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-64">
