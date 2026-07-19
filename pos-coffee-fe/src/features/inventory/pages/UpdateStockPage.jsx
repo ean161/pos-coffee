@@ -98,18 +98,17 @@ const UpdateStockPage = () => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[11px] font-black text-[#a27b5c] uppercase tracking-widest ml-1 block">
-                            Số lượng tồn thực tế (*)
+                        <label className="text-[11px] font-black text-stone-400 uppercase tracking-widest ml-1 block">
+                            Số lượng tồn hiện tại
                         </label>
                         <input
                             type="number"
                             step="0.01"
                             min="0"
-                            className="w-full bg-[#FAF6F0]/40 border border-[#ebdcd0] p-4 rounded-xl text-[#25160F] font-bold focus:ring-4 focus:ring-[#a27b5c]/10 focus:border-[#a27b5c] focus:bg-white outline-none transition-all placeholder:text-stone-300 text-sm"
+                            className="w-full bg-stone-100/80 border border-stone-200 p-4 rounded-xl text-stone-500 font-bold outline-none cursor-not-allowed text-sm"
                             value={quantity}
-                            onChange={e => setQuantity(e.target.value)}
-                            placeholder="Ví dụ: 50, 12.5..."
-                            required
+                            disabled
+
                         />
                     </div>
 

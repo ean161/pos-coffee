@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,27 +36,26 @@ public class PosOrderServiceImpl implements IPosOrderService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final VoucherRepository voucherRepository;
+    private final ShiftsRepository shiftsRepository;
     private final IUserService userService;
 
     @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
-        User staff = userRepository.findById(userService.getCurrentUser().getId())
+        User user = userRepository.findById(userService.getCurrentUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên"));
 
-        Order order = new Order();
-        order.setStaff(staff);
-        order.setCustomerName(request.customerName());
-        order.setCustomerPhone(request.customerPhone());
-        order.setOrderType(request.orderType() != null ? request.orderType() : "AT_TABLE");
-        order.setTableNumber(request.tableNumber());
-        order.setPaymentMethod(request.paymentMethod() != null ? request.paymentMethod() : "CASH");
-        order.setNotes(request.notes());
-        order.setStatus(Order.OrderStatus.PENDING);
-        order.setCreatedAt(LocalDateTime.now());
+        Shifts shift = shiftsRepository.findByUserAndStatus(user, "OPEN")
+                .orElseThrow(() -> new ResourceNotFoundException("Không có ca làm việc đang mở"));
 
-        BigDecimal subtotal = BigDecimal.ZERO;
-        List<OrderItem> orderItems = new ArrayList<>();
+        Orders orders = new Orders();
+        orders.setInvoiceNumber(generateInvoiceNumber());
+        orders.setUser(user);
+        orders.setShift(shift);
+        orders.setOrderDate(LocalDateTime.now());
+        orders.setPaymentMethod(request.paymentMethod() != null ? request.paymentMethod() : "CASH");
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (OrderItemRequest itemReq : request.items()) {
             Product product = productRepository.findById(itemReq.productId())
@@ -81,7 +81,6 @@ public class PosOrderServiceImpl implements IPosOrderService {
             BigDecimal itemToppingTotal = toppingPerUnit.multiply(BigDecimal.valueOf(itemReq.quantity()));
 
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
             orderItem.setProduct(product);
             orderItem.setVariant(variant);
             orderItem.setProductName(itemReq.productName());
@@ -95,29 +94,31 @@ public class PosOrderServiceImpl implements IPosOrderService {
             orderItem.setToppingTotal(itemToppingTotal);
             orderItem.setToppings(toppings);
 
-            orderItems.add(orderItem);
-            subtotal = subtotal.add(itemReq.lineTotal()).add(itemToppingTotal);
+            orders.addItem(orderItem);
+            totalAmount = totalAmount.add(itemReq.lineTotal()).add(itemToppingTotal);
         }
 
-        order.setItems(orderItems);
-        order.setSubtotal(subtotal);
+        orders.setTotalAmount(totalAmount);
 
         BigDecimal discountAmount = BigDecimal.ZERO;
         if (request.voucherCode() != null && !request.voucherCode().isBlank()) {
             VoucherValidationResponse validation = validateVoucherInternal(
-                    request.voucherCode().trim().toUpperCase(), subtotal);
+                    request.voucherCode().trim().toUpperCase(), totalAmount);
             if (!"OK".equals(validation.message())) {
                 throw new RuntimeException(validation.message());
             }
             discountAmount = validation.discountAmount();
         }
 
-        order.setDiscountAmount(discountAmount);
-        order.setSurchargeAmount(BigDecimal.ZERO);
-        order.setTotalAmount(subtotal.subtract(discountAmount).max(BigDecimal.ZERO));
+        orders.setDiscountAmount(discountAmount);
+        orders.setFinalAmount(totalAmount.subtract(discountAmount).max(BigDecimal.ZERO));
 
-        Order saved = orderRepository.save(order);
+        Orders saved = orderRepository.save(orders);
         return mapToResponse(saved);
+    }
+
+    private String generateInvoiceNumber() {
+        return "INV-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
     }
 
     @Override
@@ -229,27 +230,21 @@ public class PosOrderServiceImpl implements IPosOrderService {
         return v.setScale(0, RoundingMode.HALF_UP).toPlainString();
     }
 
-    private OrderResponse mapToResponse(Order order) {
-        List<OrderItemResponse> itemResponses = order.getItems().stream()
+    private OrderResponse mapToResponse(Orders orders) {
+        List<OrderItemResponse> itemResponses = orders.getItems().stream()
                 .map(this::mapToItemResponse)
                 .toList();
 
         return new OrderResponse(
-                order.getId(),
-                order.getStaff().getId(),
-                order.getStaff().getFullName(),
-                order.getCustomerName(),
-                order.getCustomerPhone(),
-                order.getSubtotal(),
-                order.getDiscountAmount(),
-                order.getSurchargeAmount(),
-                order.getTotalAmount(),
-                order.getOrderType(),
-                order.getTableNumber(),
-                order.getPaymentMethod(),
-                order.getStatus().name(),
-                order.getNotes(),
-                order.getCreatedAt(),
+                orders.getId(),
+                orders.getInvoiceNumber(),
+                orders.getUser().getId(),
+                orders.getUser().getFullName(),
+                orders.getTotalAmount(),
+                orders.getDiscountAmount(),
+                orders.getFinalAmount(),
+                orders.getPaymentMethod(),
+                orders.getOrderDate(),
                 itemResponses
         );
     }

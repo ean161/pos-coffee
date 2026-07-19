@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -19,7 +21,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-        @Column(name = "invoice_number", nullable = false, unique = true)
+    @Column(name = "invoice_number", nullable = false, unique = true)
     private String invoiceNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,10 +31,10 @@ public class Orders {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shift_id", nullable = false)
     private Shifts shift;
-    
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "voucher_id")
-//    private Voucher voucher;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
@@ -48,4 +50,9 @@ public class Orders {
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
+
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+    }
 }

@@ -1,8 +1,5 @@
 package vn.fcc.pos_coffee_be.controller;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +20,8 @@ public class StaffOrderController {
         return ResponseEntity.ok(staffOrderService.getMyOrders());
     }
 
-    @PatchMapping("/{orderId}/status")
-    public ResponseEntity<OrderResponse> updateOrderStatus(
-            @PathVariable String orderId,
-            @Valid @RequestBody StatusUpdateRequest request
-    ) {
-        return ResponseEntity.ok(staffOrderService.updateOrderStatus(orderId, request.status()));
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> updateOrderStatus(@PathVariable Long orderId) {
+        return ResponseEntity.ok(staffOrderService.updateOrderStatus(orderId));
     }
-
-    public record StatusUpdateRequest(
-            @NotBlank(message = "Trạng thái không được để trống")
-            @Size(max = 20, message = "Trạng thái không quá 20 ký tự")
-            String status
-    ) {}
 }

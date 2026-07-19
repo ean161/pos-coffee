@@ -192,14 +192,14 @@ export default function CustomizeModal({ product, variants, toppings, onAdd, onC
                         <div className="flex items-center gap-3 bg-white rounded-2xl border border-stone-200 px-1 py-1">
                             <button
                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                className="p-2 rounded-xl hover:bg-stone-100 transition-colors"
+                                className="p-2 rounded-xl  text-black hover:bg-stone-100 transition-colors"
                             >
                                 <Minus size={16} />
                             </button>
-                            <span className="font-extrabold text-lg w-8 text-center">{quantity}</span>
+                            <span className="font-extrabold text-lg text-black w-8 text-center">{quantity}</span>
                             <button
                                 onClick={() => setQuantity(quantity + 1)}
-                                className="p-2 rounded-xl hover:bg-stone-100 transition-colors"
+                                className="p-2 rounded-xl text-black hover:bg-stone-100 transition-colors"
                             >
                                 <Plus size={16} />
                             </button>

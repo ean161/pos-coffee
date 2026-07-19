@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.fcc.pos_coffee_be.dto.response.OrderItemResponse;
 import vn.fcc.pos_coffee_be.dto.response.OrderResponse;
 import vn.fcc.pos_coffee_be.dto.response.ToppingResponse;
-import vn.fcc.pos_coffee_be.entity.Order;
+import vn.fcc.pos_coffee_be.entity.Orders;
 import vn.fcc.pos_coffee_be.exception.ResourceNotFoundException;
 import vn.fcc.pos_coffee_be.repository.OrderRepository;
 import vn.fcc.pos_coffee_be.service.IStaffOrderService;
@@ -24,30 +24,28 @@ public class StaffOrderServiceImpl implements IStaffOrderService {
     @Override
     public List<OrderResponse> getMyOrders() {
         String staffId = userService.getCurrentUser().getId();
-        return orderRepository.findByStaffIdOrderByCreatedAtDesc(staffId).stream()
+        return orderRepository.findByUserIdOrderByOrderDateDesc(staffId).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     @Override
     @Transactional
-    public OrderResponse updateOrderStatus(String orderId, String status) {
-        Order order = orderRepository.findById(orderId)
+    public OrderResponse updateOrderStatus(Long orderId) {
+        Orders orders = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng: " + orderId));
 
-        String currentStaffId = userService.getCurrentUser().getId();
-        if (!order.getStaff().getId().equals(currentStaffId)) {
+        String currentUserId = userService.getCurrentUser().getId();
+        if (!orders.getUser().getId().equals(currentUserId)) {
             throw new ResourceNotFoundException("Bạn không có quyền cập nhật đơn hàng này");
         }
 
-        Order.OrderStatus newStatus = Order.OrderStatus.valueOf(status);
-        order.setStatus(newStatus);
-        Order saved = orderRepository.save(order);
+        Orders saved = orderRepository.save(orders);
         return mapToResponse(saved);
     }
 
-    private OrderResponse mapToResponse(Order order) {
-        List<OrderItemResponse> itemResponses = order.getItems().stream()
+    private OrderResponse mapToResponse(Orders orders) {
+        List<OrderItemResponse> itemResponses = orders.getItems().stream()
                 .map(item -> {
                     List<ToppingResponse> toppingResponses = item.getToppings().stream()
                             .map(t -> new ToppingResponse(t.getId(), t.getName(), t.getPrice(), t.getStatus()))
@@ -72,21 +70,15 @@ public class StaffOrderServiceImpl implements IStaffOrderService {
                 .toList();
 
         return new OrderResponse(
-                order.getId(),
-                order.getStaff().getId(),
-                order.getStaff().getFullName(),
-                order.getCustomerName(),
-                order.getCustomerPhone(),
-                order.getSubtotal(),
-                order.getDiscountAmount(),
-                order.getSurchargeAmount(),
-                order.getTotalAmount(),
-                order.getOrderType(),
-                order.getTableNumber(),
-                order.getPaymentMethod(),
-                order.getStatus().name(),
-                order.getNotes(),
-                order.getCreatedAt(),
+                orders.getId(),
+                orders.getInvoiceNumber(),
+                orders.getUser().getId(),
+                orders.getUser().getFullName(),
+                orders.getTotalAmount(),
+                orders.getDiscountAmount(),
+                orders.getFinalAmount(),
+                orders.getPaymentMethod(),
+                orders.getOrderDate(),
                 itemResponses
         );
     }

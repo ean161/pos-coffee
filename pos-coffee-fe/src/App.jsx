@@ -15,6 +15,10 @@ import POSPage from "./features/pos/pages/POSPage.jsx";
 import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
 import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
 import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderFormPage.jsx";
+import StatisticPage from "./features/statistics/pages/StatisticPage.jsx";
+import EmployeePage from "./features/employee/pages/EmployeePage";
+import ShiftsPage from "./features/shift/pages/ShiftsPage";
+import PayrollPage from "./features/payroll/pages/PayrollPage";
 
 function App() {
     return (
@@ -74,6 +78,10 @@ function App() {
                         <Route path="/surcharges" element={<SurchargePage />} />
                         <Route path="/vouchers" element={<VoucherPage />} />
                         <Route path="/orders" element={<POSPage />} />
+                        <Route path="/top-selling" element={<StatisticPage />} />
+                        <Route path="/employees" element={<EmployeePage />} />
+                        <Route path="/shifts" element={<ShiftsPage />} />
+                        <Route path="/payroll" element={<PayrollPage />} />
                     </Route>
                 </Route>
             </Routes>

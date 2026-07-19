@@ -18,7 +18,7 @@ const ToppingDetailModal = ({ isOpen, onClose, topping, onRefresh }) => {
 
     const handleUpdatePrice = async (e) => {
         e.preventDefault();
-        if (!price || price <= 0) return;
+        if (!price || parseFloat(price) < 0) return;
         setSaving(true);
         try {
             await axiosClient.patch(`/toppings/${topping.toppingId}/price?price=${parseFloat(price)}`);
@@ -83,12 +83,16 @@ const ToppingDetailModal = ({ isOpen, onClose, topping, onRefresh }) => {
                         <div className="space-y-2">
                             <input
                                 type="number"
-                                className="w-full bg-[#FAF6F0]/40 border border-[#ebdcd0] p-3 rounded-xl text-[#25160f] font-bold focus:ring-4 focus:ring-[#a27b5c]/10 focus:border-[#a27b5c] outline-none text-sm transition-all"
+                                min="0"
+                                className={`w-full bg-[#FAF6F0]/40 border ${parseFloat(price) < 0 ? 'border-red-500' : 'border-[#ebdcd0]'} p-3 rounded-xl text-[#25160f] font-bold focus:ring-4 focus:ring-[#a27b5c]/10 focus:border-[#a27b5c] outline-none text-sm transition-all`}
                                 placeholder="Nhập giá mới..."
                                 value={price}
                                 onChange={(e) => setPrice(e.target.value)}
                                 required
                             />
+                            {parseFloat(price) < 0 && (
+                                <span className="text-xs text-red-500 font-bold ml-1 block">Giá không được nhỏ hơn 0</span>
+                            )}
                             <p className="text-[10px] text-stone-400 ml-1">
                                 Giá hiện tại: <span className="font-bold text-[#a27b5c]">{formatCurrency(topping.price)}</span>
                             </p>
@@ -97,7 +101,7 @@ const ToppingDetailModal = ({ isOpen, onClose, topping, onRefresh }) => {
                         <div className="pt-2 flex justify-end gap-2 text-xs">
                             <button
                                 type="submit"
-                                disabled={saving}
+                                disabled={saving || parseFloat(price) < 0}
                                 className="px-5 py-2.5 bg-[#4a3728] hover:bg-[#35271c] text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-md transition-all disabled:opacity-50"
                             >
                                 {saving ? <Loader2 size={12} className="animate-spin" /> : null}
