@@ -18,6 +18,7 @@ import HistoryOrderFormPage from "./features/historyOrders/page/HistoryOrderForm
 import StatisticPage from "./features/statistics/pages/StatisticPage.jsx";
 import EmployeePage from "./features/employee/pages/EmployeePage";
 import ShiftsPage from "./features/shift/pages/ShiftsPage";
+import PayrollPage from "./features/payroll/pages/PayrollPage";
 
 function App() {
     return (
@@ -80,6 +81,7 @@ function App() {
                         <Route path="/top-selling" element={<StatisticPage />} />
                         <Route path="/employees" element={<EmployeePage />} />
                         <Route path="/shifts" element={<ShiftsPage />} />
+                        <Route path="/payroll" element={<PayrollPage />} />
                     </Route>
                 </Route>
             </Routes>
