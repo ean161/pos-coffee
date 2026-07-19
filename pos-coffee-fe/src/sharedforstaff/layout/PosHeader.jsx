@@ -12,7 +12,10 @@ export default function PosHeader({
                                       setSearchQuery,
                                       categories,
                                       selectedCategory,
-                                      setSelectedCategory
+                                      setSelectedCategory,
+                                      shiftOpened,
+                                      onOpenShift,
+                                      onCloseShift
                                   }) {
     const navigate = useNavigate();
 
@@ -30,8 +33,23 @@ export default function PosHeader({
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4a3728] text-white hover:bg-[#26170f]"
                 >
                     <HistoryIcon size={18}/>
-                    Lịch sử bán hàng
+                    Lịch sử
                 </button>
+                {!shiftOpened ? (
+                    <button
+                        onClick={onOpenShift}
+                        className="px-5 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700"
+                    >
+                        Mở ca
+                    </button>
+                ) : (
+                    <button
+                        onClick={onCloseShift}
+                        className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700"
+                    >
+                        Kết ca
+                    </button>
+                )}
 
                 <div className="ml-auto flex items-center gap-2 text-black text-stone-500">
                     <UtensilsCrossed size={14}/>
@@ -47,21 +65,35 @@ export default function PosHeader({
                 />
 
                 <input
+                    disabled={!shiftOpened}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Tìm kiếm sản phẩm..."
-                    className="w-full pl-11 pr-4 py-3 rounded-2xl text-black bg-stone-100 border border-stone-200"
+                    placeholder={
+                        shiftOpened
+                            ? "Tìm kiếm sản phẩm..."
+                            : "Hãy mở ca để bắt đầu bán hàng"
+                    }
+                    className={`w-full pl-11 pr-4 py-3 rounded-2xl border
+        ${
+                        shiftOpened
+                            ? "bg-stone-100 border-stone-200 text-black"
+                            : "bg-stone-200 border-stone-300 text-stone-400 cursor-not-allowed"
+                    }`}
                 />
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-1">
 
                 <button
+                    disabled={!shiftOpened}
                     onClick={() => setSelectedCategory("ALL")}
-                    className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap ${
-                        selectedCategory === "ALL"
-                            ? "bg-[#4a3728] text-white shadow-lg"
-                            : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                    className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap
+        ${
+                        !shiftOpened
+                            ? "bg-stone-200 text-stone-400 cursor-not-allowed"
+                            : selectedCategory === "ALL"
+                                ? "bg-[#4a3728] text-white"
+                                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                     }`}
                 >
                     Tất cả
@@ -70,11 +102,15 @@ export default function PosHeader({
                 {categories.map((cat) => (
                     <button
                         key={cat.categoryId}
+                        disabled={!shiftOpened}
                         onClick={() => setSelectedCategory(cat.name)}
-                        className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap ${
-                            selectedCategory === cat.name
-                                ? "bg-[#4a3728] text-white shadow-lg"
-                                : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                        className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap
+            ${
+                            !shiftOpened
+                                ? "bg-stone-200 text-stone-400 cursor-not-allowed"
+                                : selectedCategory === cat.name
+                                    ? "bg-[#4a3728] text-white"
+                                    : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                         }`}
                     >
                         {cat.name}

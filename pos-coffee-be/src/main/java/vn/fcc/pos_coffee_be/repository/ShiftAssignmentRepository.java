@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.fcc.pos_coffee_be.entity.ShiftAssignment;
+import vn.fcc.pos_coffee_be.entity.Shifts;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, Long> {
@@ -27,4 +29,9 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("workDate") LocalDate workDate,
             @Param("excludeSlotId") Long excludeSlotId
     );
+    Optional<ShiftAssignment> findByEmployeeUserIdAndWorkDate(
+            String employeeUserId,
+            LocalDate workDate
+    );
+
 }
