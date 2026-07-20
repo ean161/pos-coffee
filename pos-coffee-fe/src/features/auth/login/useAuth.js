@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, login, logout } from "./authApi.js";
+import { clearStoredAuth } from "./authStorage.js";
 
 export const useCurrentUser = () => {
     return useQuery({
@@ -7,7 +8,6 @@ export const useCurrentUser = () => {
         queryFn: getCurrentUser,
         enabled: Boolean(localStorage.getItem("accessToken")),
         retry: false,
-        select: (res) => res.data,
     });
 };
 
@@ -32,8 +32,7 @@ export const useLogout = () => {
     return useMutation({
         mutationFn: logout,
         onSettled: () => {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("currentUser");
+            clearStoredAuth();
             queryClient.removeQueries({ queryKey: ["currentUser"] });
         },
     });

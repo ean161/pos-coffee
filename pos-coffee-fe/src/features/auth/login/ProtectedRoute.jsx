@@ -1,10 +1,11 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { getStoredAuth, homeForRole } from "./authStorage.js";
 
 const ProtectedRoute = () => {
     const location = useLocation();
-    const token = localStorage.getItem("accessToken");
+    const auth = getStoredAuth();
 
-    if (!token) {
+    if (!auth) {
         return <Navigate to="/login" replace state={{ from: location }} />;
     }
 
@@ -12,32 +13,22 @@ const ProtectedRoute = () => {
 };
 
 export const AdminRoute = () => {
-    const token = localStorage.getItem("accessToken");
-    const rawUser = localStorage.getItem("currentUser");
-    if (!token) {
-        return <Navigate to="/login" replace />;
+    const location = useLocation();
+    const auth = getStoredAuth();
+    if (!auth) return <Navigate to="/login" replace state={{ from: location }} />;
+    if (auth.user.role !== "ADMIN") {
+        return <Navigate to={homeForRole(auth.user.role)} replace />;
     }
-    try {
-        const user = rawUser ? JSON.parse(rawUser) : null;
-        if (user && user.role && user.role !== "ADMIN") {
-            return <Navigate to="/staff/pos" replace />;
-        }
-    } catch (_) {}
     return <Outlet />;
 };
 
 export const StaffRoute = () => {
-    const token = localStorage.getItem("accessToken");
-    const rawUser = localStorage.getItem("currentUser");
-    if (!token) {
-        return <Navigate to="/login" replace />;
+    const location = useLocation();
+    const auth = getStoredAuth();
+    if (!auth) return <Navigate to="/login" replace state={{ from: location }} />;
+    if (auth.user.role !== "STAFF") {
+        return <Navigate to={homeForRole(auth.user.role)} replace />;
     }
-    try {
-        const user = rawUser ? JSON.parse(rawUser) : null;
-        if (user && user.role && user.role !== "STAFF") {
-            return <Navigate to="/categories" replace />;
-        }
-    } catch (_) {}
     return <Outlet />;
 };
 

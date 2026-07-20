@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useLogin } from "./useAuth.js";
+import { canRoleAccessPath, getStoredAuth, homeForRole } from "./authStorage.js";
 import {
     Coffee, User, Lock, Eye, EyeOff, AlertCircle,
     Loader2, Sparkles, ShieldCheck, ArrowRight
@@ -12,19 +13,13 @@ const LoginPage = () => {
     const loginMutation = useLogin();
     const [form, setForm] = useState({ username: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
-    const token = localStorage.getItem("accessToken");
+    const auth = getStoredAuth();
 
-    if (token) {
-        let fallback = "/categories";
-        try {
-            const cached = JSON.parse(localStorage.getItem("currentUser") || "null");
-            if (cached?.role === "STAFF") {
-                fallback = "/staff/pos";
-            }
-        } catch {
-            fallback = "/categories";
-        }
-        const targetPath = location.state?.from?.pathname || fallback;
+    if (auth) {
+        const requestedPath = location.state?.from?.pathname;
+        const targetPath = canRoleAccessPath(auth.user.role, requestedPath)
+            ? requestedPath
+            : homeForRole(auth.user.role);
         return <Navigate to={targetPath} replace />;
     }
 
@@ -40,15 +35,19 @@ const LoginPage = () => {
         loginMutation.mutate(form, {
             onSuccess: (data) => {
                 const role = data?.user?.role;
-                const fallback = role === "STAFF" ? "/staff/pos" : "/categories";
-                navigate(location.state?.from?.pathname || fallback, { replace: true });
+                const requestedPath = location.state?.from?.pathname || sessionStorage.getItem("authRedirectPath");
+                sessionStorage.removeItem("authRedirectPath");
+                const targetPath = canRoleAccessPath(role, requestedPath)
+                    ? requestedPath
+                    : homeForRole(role);
+                navigate(targetPath, { replace: true });
             },
         });
     };
 
     const getErrorMessage = () => {
         if (!loginMutation.isError) return null;
-        return loginMutation.error?.response?.data?.message || "Tài khoản hoặc mật khẩu không chính xác!";
+        return loginMutation.error?.userMessage || "Tài khoản hoặc mật khẩu không chính xác!";
     };
 
     return (

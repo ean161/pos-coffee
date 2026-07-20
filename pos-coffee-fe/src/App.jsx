@@ -10,7 +10,7 @@ import VoucherPage from "./features/voucher/pages/VoucherPage";
 import InventoryPage from "./features/inventory/pages/InventoryPage";
 import UpdateStockPage from "./features/inventory/pages/UpdateStockPage";
 import LoginPage from "./features/auth/login/LoginPage";
-import ProtectedRoute, { StaffRoute } from "./features/auth/login/ProtectedRoute";
+import ProtectedRoute, { AdminRoute, StaffRoute } from "./features/auth/login/ProtectedRoute";
 import POSPage from "./features/pos/pages/POSPage.jsx";
 import StaffOrdersPage from "./features/staff/pages/StaffOrdersPage.jsx";
 import StaffLayout from "./features/staff/layout/StaffLayout.jsx";
@@ -22,6 +22,12 @@ import PayrollPage from "./features/payroll/pages/PayrollPage";
 import CashControlPage from "./features/cashHistory/pages/CashControlPage";
 import CashHistoryAdminPage from "./features/cashHistory/pages/CashHistoryAdminPage";
 import PaymentHistoryPage from "./features/paymentHistory/pages/PaymentHistoryPage.jsx";
+import { getStoredAuth, homeForRole } from "./features/auth/login/authStorage.js";
+
+const RouteFallback = () => {
+    const auth = getStoredAuth();
+    return <Navigate to={auth ? homeForRole(auth.user.role) : "/login"} replace />;
+};
 
 function App() {
     return (
@@ -47,7 +53,8 @@ function App() {
 
                 {/* Admin routes — shared layout with sidebar */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<AppLayout />}>
+                    <Route element={<AdminRoute />}>
+                        <Route path="/" element={<AppLayout />}>
                         <Route
                             index
                             element={<Navigate to="/categories" replace />}
@@ -88,8 +95,10 @@ function App() {
                         <Route path="/payroll" element={<PayrollPage />} />
                         <Route path="/admin/cash-history" element={<CashHistoryAdminPage />} />
                         <Route path="/admin/payment-history" element={<PaymentHistoryPage />} />
+                        </Route>
                     </Route>
                 </Route>
+                <Route path="*" element={<RouteFallback />} />
             </Routes>
         </BrowserRouter>
     );
