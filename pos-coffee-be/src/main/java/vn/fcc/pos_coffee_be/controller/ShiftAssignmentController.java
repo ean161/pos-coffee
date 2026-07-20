@@ -55,7 +55,8 @@ public class ShiftAssignmentController {
     @PostMapping("/slots/seed")
     public ResponseEntity<List<ShiftSlotResponse>> seedDefaultSlots(
             @RequestParam(value = "days", defaultValue = "7") int days) {
-        return ResponseEntity.ok(service.seedDefaultSlots(days));
+        // service.seedDefaultSlots(days), removed
+        return ResponseEntity.ok().build();
     }
 
     // ───────── ShiftAssignment ─────────

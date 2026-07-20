@@ -56,14 +56,6 @@ const ShiftsPage = () => {
         setLoading(true);
         setError('');
         try {
-            // Đảm bảo luôn có 3 ca mặc định (Sáng/Chiều/Tối) cho tuần đang xem.
-            // Endpoint này idempotent — mỗi tuần reload sẽ lấp slot còn thiếu.
-            try {
-                await shiftApi.seedDefaultSlots(60);
-            } catch (seedErr) {
-                console.warn('seedDefaultSlots failed:', seedErr?.message || seedErr);
-            }
-
             const [empRes, slotRes, assignRes] = await Promise.all([
                 employeeApi.getAll(),
                 shiftApi.getSlots(fromDate, toDate),
