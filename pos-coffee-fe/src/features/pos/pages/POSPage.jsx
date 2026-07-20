@@ -127,37 +127,34 @@ export default function POSPage() {
         paymentMethod,
         voucherCode,
     }) => {
-        try {
-            const payload = {
-                customerName,
-                customerPhone,
-                orderType,
-                tableNumber: orderType === "AT_TABLE" ? tableNumber : null,
-                paymentMethod,
-                voucherCode: voucherCode || null,
-                items: cart.map((item) => ({
-                    productId: item.productId,
-                    variantId: item.variantId,
-                    productName: item.productName,
-                    variantName: item.variantName,
-                    unitPrice: item.unitPrice,
-                    quantity: item.quantity,
-                    sizeName: item.sizeName,
-                    sugarLevel: item.sugarLevel,
-                    iceLevel: item.iceLevel,
-                    lineTotal: item.lineTotal,
-                    toppingTotal: item.toppingTotal,
-                    toppingIds: item.toppings?.map((t) => t.toppingId || t.id),
-                })),
-            };
+        const payload = {
+            customerName,
+            customerPhone,
+            orderType,
+            tableNumber: orderType === "AT_TABLE" ? tableNumber : null,
+            paymentMethod,
+            voucherCode: voucherCode || null,
+            items: cart.map((item) => ({
+                productId: item.productId,
+                variantId: item.variantId,
+                productName: item.productName,
+                variantName: item.variantName,
+                unitPrice: item.unitPrice,
+                quantity: item.quantity,
+                sizeName: item.sizeName,
+                sugarLevel: item.sugarLevel,
+                iceLevel: item.iceLevel,
+                lineTotal: item.lineTotal,
+                toppingTotal: item.toppingTotal,
+                toppingIds: item.toppings?.map((t) => t.toppingId || t.id),
+            })),
+        };
 
-            const result = await createOrderMutation.mutateAsync(payload);
-            setCart([]);
-            return result.data;
-        } catch (err) {
-            console.error("Order failed:", err);
-            return null;
-        }
+        // The simulator considers payment successful only after the API has
+        // committed the order and its cart items.
+        const result = await createOrderMutation.mutateAsync(payload);
+        setCart([]);
+        return { ...result.data, orderType };
     };
 
     if (checkingShift) {

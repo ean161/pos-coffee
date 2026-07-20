@@ -29,8 +29,19 @@ public class Orders {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "slot_id", nullable = false)
+    // Keep this column nullable for legacy orders. SQL Server cannot add a
+    // required column to the existing, non-empty orders table during Hibernate
+    // schema update. New POS orders still always receive the active shift slot
+    // in PosOrderServiceImpl.
+    @JoinColumn(name = "slot_id")
     private ShiftSlot slot;
+
+    // Retain the concrete check-in shift for compatibility with the existing
+    // orders.shift_id foreign key. It is nullable in the mapping so Hibernate
+    // can also upgrade databases that do not have this legacy column yet.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shift_id")
+    private Shifts shift;
 
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

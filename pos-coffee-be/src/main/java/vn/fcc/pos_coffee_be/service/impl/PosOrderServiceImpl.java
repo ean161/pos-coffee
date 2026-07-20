@@ -19,9 +19,7 @@ import vn.fcc.pos_coffee_be.service.IUserService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,7 @@ public class PosOrderServiceImpl implements IPosOrderService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final VoucherRepository voucherRepository;
-    private final ShiftAssignmentRepository shiftAssignmentRepository;
+    private final ShiftsRepository shiftsRepository;
     private final IUserService userService;
 
     @Override
@@ -47,26 +45,15 @@ public class PosOrderServiceImpl implements IPosOrderService {
         User user = userRepository.findById(userService.getCurrentUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên"));
 
-        ShiftSlot slot = shiftAssignmentRepository
-                .findByEmployeeUserIdAndWorkDateOrderBySlotStart(user.getId(), LocalDate.now())
-                .stream()
-                .map(ShiftAssignment::getSlot)
-                .filter(sl -> {
-                    LocalTime now = LocalTime.now();
-                    return !now.isBefore(sl.getStartTime()) && !now.isAfter(sl.getEndTime());
-                })
-                .findFirst()
-                .or(() -> shiftAssignmentRepository
-                        .findByEmployeeUserIdAndWorkDateOrderBySlotStart(user.getId(), LocalDate.now())
-                        .stream()
-                        .map(ShiftAssignment::getSlot)
-                        .findFirst())
-                .orElseThrow(() -> new ResourceNotFoundException("Hôm nay bạn không được phân ca làm việc"));
+        Shifts shift = shiftsRepository
+                .findFirstByUserAndStatusOrderByOpenTimeDesc(user, Shifts.STATUS_CHECKED_IN)
+                .orElseThrow(() -> new ResourceNotFoundException("Bạn chưa check-in ca làm việc"));
 
         Orders orders = new Orders();
         orders.setInvoiceNumber(generateInvoiceNumber());
         orders.setUser(user);
-        orders.setSlot(slot);
+        orders.setShift(shift);
+        orders.setSlot(shift.getSlot());
         orders.setOrderDate(LocalDateTime.now());
         orders.setPaymentMethod(request.paymentMethod() != null ? request.paymentMethod() : "CASH");
 

@@ -23,6 +23,7 @@ public class OrdersController {
     public List<OrderHistoryResponseDTO> history() {
         return ordersService.getHistory();
     }
+
     @GetMapping("/{id}")
     public OrderDetailResponseDTO detail(@PathVariable Long id) {
         return ordersService.detail(id);

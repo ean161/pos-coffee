@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
-import { Coffee, LayoutGrid, Tag, CupSoda, Coins, Boxes, TrendingUp, Users, CalendarDays, Banknote, Wallet } from "lucide-react";
+import { Coffee, LayoutGrid, Tag, CupSoda, Coins, Boxes, TrendingUp, Users, CalendarDays, Banknote, Wallet, CreditCard } from "lucide-react";
 
 const MENU_ITEMS = [
     { icon: <TrendingUp className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Thống kê', path: '/top-selling' },
@@ -13,6 +13,7 @@ const MENU_ITEMS = [
     { icon: <CalendarDays className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Xếp ca', path: '/shifts' },
     { icon: <Banknote className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Bảng lương', path: '/payroll' },
     { icon: <Wallet className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Lịch sử két', path: '/admin/cash-history' },
+    { icon: <CreditCard className="w-5 h-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />, label: 'Lịch sử thanh toán', path: '/admin/payment-history' },
 ];
 
 const SideBar = ({ isOpen }) => {

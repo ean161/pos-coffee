@@ -24,6 +24,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
     const [paymentMethod, setPaymentMethod] = React.useState("CASH");
     const [showSuccess, setShowSuccess] = React.useState(false);
     const [orderResult, setOrderResult] = React.useState(null);
+    const [paymentError, setPaymentError] = React.useState("");
 
     const [voucherCode, setVoucherCode] = React.useState("");
     const [appliedVoucher, setAppliedVoucher] = React.useState(null);
@@ -74,19 +75,23 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
 
     const handlePlaceOrder = async () => {
         if (cart.length === 0) return;
-        const result = await onPlaceOrder({
-            customerName,
-            customerPhone,
-            orderType,
-            tableNumber,
-            paymentMethod,
-            voucherCode: appliedVoucher ? appliedVoucher.code : null,
-        });
-        if (result) {
+        setPaymentError("");
+        try {
+            const result = await onPlaceOrder({
+                customerName,
+                customerPhone,
+                orderType,
+                tableNumber,
+                paymentMethod,
+                voucherCode: appliedVoucher ? appliedVoucher.code : null,
+            });
             setOrderResult(result);
             setShowSuccess(true);
             setAppliedVoucher(null);
             setVoucherCode("");
+        } catch (error) {
+            console.error("Payment failed:", error);
+            setPaymentError(error?.message || "Không thể thanh toán. Vui lòng thử lại.");
         }
     };
 
@@ -103,7 +108,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                     <p className="text-stone-500 text-sm mb-6">
                         Mã đơn:{" "}
                         <span className="font-bold text-stone-700">
-                            #{orderResult.orderId?.slice(0, 8).toUpperCase()}
+                            {orderResult.invoiceNumber || `#${String(orderResult.orderId)}`}
                         </span>
                     </p>
 
@@ -111,7 +116,7 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                         <div className="flex justify-between text-sm">
                             <span className="text-stone-500">Tổng tiền</span>
                             <span className="font-bold text-stone-800">
-                                {formatPrice(orderResult.totalAmount)}
+                                {formatPrice(orderResult.finalAmount ?? orderResult.totalAmount)}
                             </span>
                         </div>
                         <div className="flex justify-between text-sm">
@@ -361,10 +366,15 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                     ) : (
                         <>
                             <Receipt size={20} />
-                            Đặt hàng
+                            Thanh toán
                         </>
                     )}
                 </button>
+                {paymentError && (
+                    <p role="alert" className="mt-2 text-center text-xs font-medium text-red-600">
+                        {paymentError}
+                    </p>
+                )}
             </div>
         </div>
     );
