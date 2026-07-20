@@ -154,7 +154,13 @@ export default function POSPage() {
         // committed the order and its cart items.
         const result = await createOrderMutation.mutateAsync(payload);
         setCart([]);
-        return { ...result.data, orderType };
+        return {
+            ...result.data,
+            customerName,
+            customerPhone,
+            orderType,
+            tableNumber: orderType === "AT_TABLE" ? tableNumber : null,
+        };
     };
 
     if (checkingShift) {

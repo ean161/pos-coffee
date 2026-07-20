@@ -1,6 +1,7 @@
 import React from "react";
-import { Trash2, ShoppingCart, Receipt, CreditCard, Banknote, Truck, Tag, X, Ticket } from "lucide-react";
+import { Trash2, ShoppingCart, Receipt, CreditCard, Banknote, Truck, Tag, X, Ticket, Printer } from "lucide-react";
 import { useValidateVoucher } from "../api/useValidateVoucher.js";
+import { openReceiptPdf } from "../utils/receiptPdf.js";
 
 const formatPrice = (price) =>
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price || 0);
@@ -25,6 +26,8 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
     const [showSuccess, setShowSuccess] = React.useState(false);
     const [orderResult, setOrderResult] = React.useState(null);
     const [paymentError, setPaymentError] = React.useState("");
+    const [printError, setPrintError] = React.useState("");
+    const [isPrinting, setIsPrinting] = React.useState(false);
 
     const [voucherCode, setVoucherCode] = React.useState("");
     const [appliedVoucher, setAppliedVoucher] = React.useState(null);
@@ -95,6 +98,18 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
         }
     };
 
+    const handlePrintReceipt = async () => {
+        setPrintError("");
+        setIsPrinting(true);
+        try {
+            await openReceiptPdf(orderResult);
+        } catch (error) {
+            setPrintError(error?.message || "Không thể tạo file PDF hóa đơn.");
+        } finally {
+            setIsPrinting(false);
+        }
+    };
+
     if (showSuccess && orderResult) {
         return (
             <div className="w-96 bg-white h-full flex flex-col">
@@ -132,6 +147,18 @@ export default function CartSidebar({ cart, onRemoveItem, onUpdateQuantity, onPl
                             </span>
                         </div>
                     </div>
+
+                    <button
+                        onClick={handlePrintReceipt}
+                        disabled={isPrinting}
+                        className="w-full mb-3 border-2 border-[#4a3728] text-[#4a3728] py-3.5 rounded-2xl font-extrabold text-sm hover:bg-[#4a3728] hover:text-white transition-all flex items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-50"
+                    >
+                        <Printer size={18} />
+                        {isPrinting ? "Đang tạo PDF..." : "In hóa đơn"}
+                    </button>
+                    {printError && (
+                        <p role="alert" className="mb-3 text-xs font-medium text-red-600">{printError}</p>
+                    )}
 
                     <button
                         onClick={() => {
