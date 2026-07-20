@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Banknote, Calendar, FileSpreadsheet, Loader2, Search, X, AlertTriangle, Clock } from 'lucide-react';
 import payrollApi from "../api/payrollApi";
 import { endOfMonth, formatCurrency, formatDateTime, startOfMonth, toISODate } from "../utils/date";
@@ -39,15 +39,6 @@ const PayrollPage = () => {
             }
         })();
         return () => { cancelled = true; };
-    }, [from, to]);
-
-    const refreshAll = useCallback(async () => {
-        try {
-            const res = await payrollApi.getSummary(from, to);
-            setSummary(res.data || []);
-        } catch (err) {
-            setError(err.message || 'Không thể tải bảng lương');
-        }
     }, [from, to]);
 
     const handleMonthChange = (value) => {
@@ -103,18 +94,9 @@ const PayrollPage = () => {
 
     const saveEdit = async () => {
         if (!editingEntry || !editClockOut) return;
-        try {
-            await payrollApi.updateClockOut(editingEntry.timeLogId, toIsoDateTime(editClockOut));
-            setEditingEntry(null);
-            setEditClockOut('');
-            if (detailEmployee) {
-                const res = await payrollApi.getDetail(detailEmployee.employee.employeeId, from, to);
-                setDetailEmployee((prev) => prev ? { ...prev, entries: res.data || [] } : prev);
-            }
-            await refreshAll();
-        } catch (err) {
-            setError(err.message || 'Không thể cập nhật');
-        }
+        setError('Chức năng chỉnh sửa giờ check-out đã được thay thế bằng logic tự động.');
+        setEditingEntry(null);
+        setEditClockOut('');
     };
 
     useEffect(() => {
@@ -365,6 +347,7 @@ const PayrollPage = () => {
                                 <table className="w-full text-sm">
                                     <thead className="text-[11px] uppercase text-stone-500 font-bold tracking-widest">
                                     <tr className="border-b border-[#f7f0e9]">
+                                        <th className="py-2 text-left">Ca</th>
                                         <th className="py-2 text-left">Clock-in</th>
                                         <th className="py-2 text-left">Clock-out</th>
                                         <th className="py-2 text-right">Giờ</th>
@@ -374,14 +357,17 @@ const PayrollPage = () => {
                                     </thead>
                                     <tbody className="divide-y divide-[#f7f0e9]">
                                     {detailEmployee.entries.map((entry) => {
-                                        const abnormal = (entry.status || '').toUpperCase() === 'ABNORMAL';
+                                        const closed = !!entry.clockOutTime;
                                         return (
-                                            <tr key={entry.timeLogId}>
+                                            <tr key={entry.shiftId}>
+                                                <td className="py-2.5 text-stone-600 font-medium">
+                                                    {entry.slotName || '—'}
+                                                </td>
                                                 <td className="py-2.5 font-medium text-[#26170f]">
                                                     {formatDateTime(entry.clockInTime)}
                                                 </td>
                                                 <td className="py-2.5">
-                                                    {editingEntry?.timeLogId === entry.timeLogId ? (
+                                                    {editingEntry?.shiftId === entry.shiftId ? (
                                                         <input
                                                             type="datetime-local"
                                                             value={editClockOut}
@@ -394,20 +380,20 @@ const PayrollPage = () => {
                                                             </span>
                                                     )}
                                                 </td>
-                                                <td className="py-2.5 text-right font-bold text-[#26170f]">{formatCurrency(entry.totalHours)}</td>
+                                                <td className="py-2.5 text-right font-bold text-[#26170f]">{formatCurrency(entry.workedHours)}</td>
                                                 <td className="py-2.5 text-center">
-                                                    {abnormal ? (
-                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 rounded-md">
-                                                                <AlertTriangle size={12} /> Bất thường
-                                                            </span>
-                                                    ) : (
+                                                    {closed ? (
                                                         <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md">
                                                                 Hợp lệ
+                                                            </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 rounded-md">
+                                                                <AlertTriangle size={12} /> Chưa chốt
                                                             </span>
                                                     )}
                                                 </td>
                                                 <td className="py-2.5 text-right">
-                                                    {editingEntry?.timeLogId === entry.timeLogId ? (
+                                                    {editingEntry?.shiftId === entry.shiftId ? (
                                                         <div className="flex justify-end gap-1">
                                                             <button onClick={saveEdit} className="px-2 py-1 text-xs font-bold bg-[#4a3728] text-white rounded-md">
                                                                 Lưu
@@ -416,14 +402,14 @@ const PayrollPage = () => {
                                                                 Hủy
                                                             </button>
                                                         </div>
-                                                    ) : (
+                                                    ) : !closed ? (
                                                         <button
                                                             onClick={() => beginEdit(entry)}
                                                             className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-[#4a3728] bg-[#FAF6F0] border border-[#e5dcd3] rounded-md hover:bg-[#f0ebe5]"
                                                         >
-                                                            <Clock size={12} /> {entry.clockOutTime ? 'Sửa' : 'Chốt giờ'}
+                                                            <Clock size={12} /> Chốt giờ
                                                         </button>
-                                                    )}
+                                                    ) : null}
                                                 </td>
                                             </tr>
                                         );
@@ -449,13 +435,6 @@ const toLocalDateTimeInput = (value) => {
     if (Number.isNaN(d.getTime())) return '';
     const pad = (n) => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
-const toIsoDateTime = (value) => {
-    if (!value) return null;
-    const d = new Date(value);
-    const pad = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
 };
 
 export default PayrollPage;

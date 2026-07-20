@@ -1,13 +1,11 @@
 package vn.fcc.pos_coffee_be.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.fcc.pos_coffee_be.dto.request.UpdateTimeLogClockOutRequest;
 import vn.fcc.pos_coffee_be.dto.response.PayrollDetailEntryResponse;
 import vn.fcc.pos_coffee_be.dto.response.PayrollSummaryResponse;
 import vn.fcc.pos_coffee_be.service.IPayrollService;
@@ -39,13 +37,6 @@ public class PayrollController {
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         return ResponseEntity.ok(payrollService.getDetail(employeeId, from, to));
-    }
-
-    @PatchMapping("/time-logs/{id}/clock-out")
-    public ResponseEntity<PayrollDetailEntryResponse> updateClockOut(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateTimeLogClockOutRequest request) {
-        return ResponseEntity.ok(payrollService.updateClockOut(id, request));
     }
 
     @GetMapping("/summary/export")

@@ -21,6 +21,7 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
 
     @Query("""
             SELECT a FROM ShiftAssignment a
+            JOIN a.slot sl
             WHERE a.employeeUserId = :employeeUserId
               AND a.workDate = :workDate
               AND a.slot.id <> :excludeSlotId
@@ -30,9 +31,17 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
             @Param("workDate") LocalDate workDate,
             @Param("excludeSlotId") Long excludeSlotId
     );
-    Optional<ShiftAssignment> findByEmployeeUserIdAndWorkDate(
-            String employeeUserId,
-            LocalDate workDate
+
+    @Query("""
+            SELECT a FROM ShiftAssignment a
+            JOIN FETCH a.slot sl
+            WHERE a.employeeUserId = :employeeUserId
+              AND a.workDate = :workDate
+            ORDER BY sl.startTime ASC, a.id ASC
+            """)
+    List<ShiftAssignment> findByEmployeeUserIdAndWorkDateOrderBySlotStart(
+            @Param("employeeUserId") String employeeUserId,
+            @Param("workDate") LocalDate workDate
     );
 
 }

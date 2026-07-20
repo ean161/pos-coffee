@@ -1,13 +1,15 @@
 package vn.fcc.pos_coffee_be.service;
 
-import vn.fcc.pos_coffee_be.dto.request.CloseShiftRequestDTO;
+import vn.fcc.pos_coffee_be.dto.request.ShiftCheckInRequest;
+import vn.fcc.pos_coffee_be.dto.request.ShiftCheckOutRequest;
 import vn.fcc.pos_coffee_be.dto.response.ShiftStatusResponse;
 import vn.fcc.pos_coffee_be.dto.response.ShiftsResponseDTO;
-import vn.fcc.pos_coffee_be.entity.Shifts;
 
+import java.util.Optional;
 
 public interface IShiftsService {
- Shifts save(Shifts shifts);
- ShiftsResponseDTO closeShift(CloseShiftRequestDTO request);
- ShiftStatusResponse checkCurrentShift(String username);
+    ShiftsResponseDTO checkIn(ShiftCheckInRequest request);
+    ShiftsResponseDTO checkOut(ShiftCheckOutRequest request);
+    ShiftStatusResponse checkCurrentShift(String username);
+    Optional<ShiftsResponseDTO> getCurrent();
 }

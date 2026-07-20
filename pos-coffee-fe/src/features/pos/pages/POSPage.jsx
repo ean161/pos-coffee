@@ -8,8 +8,6 @@ import { History as HistoryIcon } from "lucide-react";
 import PosHeader from "../../../sharedforstaff/layout/PosHeader.jsx";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../../shared/axios/axiosClient";
-import CloseShiftModal from "../../historyOrders/components/CloseShiftModal.jsx";
-import OpenShiftModal from "../../historyOrders/components/OpenShiftModal.jsx";
 const formatPrice = (price) =>
 
     new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price);
@@ -22,8 +20,8 @@ export default function POSPage() {
     const [checkingShift, setCheckingShift] = useState(true);
     const [shiftOpened, setShiftOpened] = useState(false);
     const [shiftInfo, setShiftInfo] = useState(null);
-    const [openShiftModal,setOpenShiftModal]=useState(false);
-
+    const [checkInLoading, setCheckInLoading] = useState(false);
+    const [checkOutLoading, setCheckOutLoading] = useState(false);
 
     //--------------------------------/
 
@@ -55,19 +53,44 @@ export default function POSPage() {
 
     const checkCurrentShift = async () => {
         try {
-
-            const res = await axiosClient.get("/shifts/is-open");
-
+            const res = await axiosClient.get("/shifts/status");
             setShiftInfo(res.data);
-            setShiftOpened(res.data.opened);
-
+            setShiftOpened(res.data.checkedIn);
         } catch (e) {
             console.error(e);
         } finally {
             setCheckingShift(false);
         }
     };
-    const [closeShiftModal, setCloseShiftModal] = useState(false);
+
+    const handleCheckIn = async () => {
+        try {
+            setCheckInLoading(true);
+            await axiosClient.post("/shifts/check-in", {});
+            await checkCurrentShift();
+        } catch (e) {
+            console.error("Check-in failed:", e);
+            alert(e?.response?.data?.message || "Check-in thất bại. Vui lòng thử lại.");
+        } finally {
+            setCheckInLoading(false);
+        }
+    };
+
+    const handleCheckOut = async () => {
+        const note = window.prompt("Nhập ghi chú kết ca (tuỳ chọn):", "") || "";
+        try {
+            setCheckOutLoading(true);
+            await axiosClient.put("/shifts/check-out", { note });
+            setShiftOpened(false);
+            setShiftInfo(null);
+            await checkCurrentShift();
+        } catch (e) {
+            console.error("Check-out failed:", e);
+            alert(e?.response?.data?.message || "Check-out thất bại. Vui lòng thử lại.");
+        } finally {
+            setCheckOutLoading(false);
+        }
+    };
 
     const handleAddToCart = (item) => {
         setCart((prev) => [...prev, item]);
@@ -174,8 +197,10 @@ export default function POSPage() {
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
                     shiftOpened={shiftOpened}
-                    onOpenShift={() => setOpenShiftModal(true)}
-                    onCloseShift={() => setCloseShiftModal(true)}
+                    onCheckIn={handleCheckIn}
+                    checkInLoading={checkInLoading}
+                    onCheckOut={handleCheckOut}
+                    checkOutLoading={checkOutLoading}
                 />
 
                 {/* Product grid */}
@@ -213,13 +238,13 @@ export default function POSPage() {
                                 ) : (
                                     <>
                                         <h2 className="text-3xl font-bold text-[#26170f]">
-                                            Chưa mở ca
+                                            Chưa check-in
                                         </h2>
 
                                         <p className="mt-3 text-stone-500">
                                             Bạn đã được phân ca.
                                             <br />
-                                            Hãy bấm <b>Mở ca</b> ở phía trên để bắt đầu bán hàng.
+                                            Bấm <b>Check-in</b> ở thanh trên cùng để bắt đầu bán hàng.
                                         </p>
                                     </>
                                 )}
@@ -259,22 +284,6 @@ export default function POSPage() {
                     )}
                 </div>
             </div>
-            <OpenShiftModal
-                open={openShiftModal}
-                onClose={() => setOpenShiftModal(false)}
-                onSuccess={() => {
-                    setOpenShiftModal(false);
-                    checkCurrentShift();
-                }}
-            />
-            <CloseShiftModal
-                open={closeShiftModal}
-                onClose={() => setCloseShiftModal(false)}
-                onSuccess={() => {
-                    setCloseShiftModal(false);
-                    checkCurrentShift(); // cập nhật lại trạng thái ca
-                }}
-            />
 
             {/* Right: Cart sidebar */}
             {shiftOpened && (

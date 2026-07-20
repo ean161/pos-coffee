@@ -29,8 +29,8 @@ public class Orders {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shift_id", nullable = false)
-    private Shifts shift;
+    @JoinColumn(name = "slot_id", nullable = false)
+    private ShiftSlot slot;
 
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

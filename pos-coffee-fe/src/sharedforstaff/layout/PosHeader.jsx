@@ -2,7 +2,11 @@ import {
     Coffee,
     Search,
     UtensilsCrossed,
-    History as HistoryIcon
+    History as HistoryIcon,
+    Wallet,
+    LogIn,
+    LogOut,
+    Loader2,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -14,8 +18,10 @@ export default function PosHeader({
                                       selectedCategory,
                                       setSelectedCategory,
                                       shiftOpened,
-                                      onOpenShift,
-                                      onCloseShift
+                                      onCheckIn,
+                                      checkInLoading,
+                                      onCheckOut,
+                                      checkOutLoading,
                                   }) {
     const navigate = useNavigate();
 
@@ -35,19 +41,35 @@ export default function PosHeader({
                     <HistoryIcon size={18}/>
                     Lịch sử
                 </button>
-                {!shiftOpened ? (
+                <button
+                    onClick={() => navigate("/staff/cash")}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4a3728] text-white hover:bg-[#26170f]"
+                >
+                    <Wallet size={18}/>
+                    Két tiền
+                </button>
+                {!shiftOpened && (
                     <button
-                        onClick={onOpenShift}
-                        className="px-5 py-2 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700"
+                        disabled={checkInLoading || !onCheckIn}
+                        onClick={onCheckIn}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Mở ca
+                        <LogIn size={18}/>
+                        {checkInLoading ? "Đang check-in..." : "Check-in"}
                     </button>
-                ) : (
+                )}
+                {shiftOpened && (
                     <button
-                        onClick={onCloseShift}
-                        className="px-5 py-2 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700"
+                        disabled={checkOutLoading || !onCheckOut}
+                        onClick={onCheckOut}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Kết ca
+                        {checkOutLoading ? (
+                            <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                            <LogOut size={18} />
+                        )}
+                        {checkOutLoading ? "Đang check-out..." : "Check-out"}
                     </button>
                 )}
 
@@ -71,7 +93,7 @@ export default function PosHeader({
                     placeholder={
                         shiftOpened
                             ? "Tìm kiếm sản phẩm..."
-                            : "Hãy mở ca để bắt đầu bán hàng"
+                            : "Hãy check-in ca để bắt đầu bán hàng"
                     }
                     className={`w-full pl-11 pr-4 py-3 rounded-2xl border
         ${

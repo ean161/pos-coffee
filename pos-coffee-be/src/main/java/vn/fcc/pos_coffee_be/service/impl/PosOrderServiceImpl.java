@@ -19,7 +19,9 @@ import vn.fcc.pos_coffee_be.service.IUserService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +38,7 @@ public class PosOrderServiceImpl implements IPosOrderService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final VoucherRepository voucherRepository;
-    private final ShiftsRepository shiftsRepository;
+    private final ShiftAssignmentRepository shiftAssignmentRepository;
     private final IUserService userService;
 
     @Override
@@ -45,13 +47,26 @@ public class PosOrderServiceImpl implements IPosOrderService {
         User user = userRepository.findById(userService.getCurrentUser().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên"));
 
-        Shifts shift = shiftsRepository.findByUserAndStatus(user, "OPEN")
-                .orElseThrow(() -> new ResourceNotFoundException("Không có ca làm việc đang mở"));
+        ShiftSlot slot = shiftAssignmentRepository
+                .findByEmployeeUserIdAndWorkDateOrderBySlotStart(user.getId(), LocalDate.now())
+                .stream()
+                .map(ShiftAssignment::getSlot)
+                .filter(sl -> {
+                    LocalTime now = LocalTime.now();
+                    return !now.isBefore(sl.getStartTime()) && !now.isAfter(sl.getEndTime());
+                })
+                .findFirst()
+                .or(() -> shiftAssignmentRepository
+                        .findByEmployeeUserIdAndWorkDateOrderBySlotStart(user.getId(), LocalDate.now())
+                        .stream()
+                        .map(ShiftAssignment::getSlot)
+                        .findFirst())
+                .orElseThrow(() -> new ResourceNotFoundException("Hôm nay bạn không được phân ca làm việc"));
 
         Orders orders = new Orders();
         orders.setInvoiceNumber(generateInvoiceNumber());
         orders.setUser(user);
-        orders.setShift(shift);
+        orders.setSlot(slot);
         orders.setOrderDate(LocalDateTime.now());
         orders.setPaymentMethod(request.paymentMethod() != null ? request.paymentMethod() : "CASH");
 

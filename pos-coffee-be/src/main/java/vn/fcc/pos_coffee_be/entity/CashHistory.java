@@ -8,17 +8,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "shifts")
+@Table(name = "cash_history")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Shifts {
-
-    public static final String STATUS_CHECKED_IN = "CHECKED_IN";
-    public static final String STATUS_CHECKED_OUT = "CHECKED_OUT";
+public class CashHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,23 +25,18 @@ public class Shifts {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "slot_id", nullable = false)
-    private ShiftSlot slot;
-
-    @Column(name = "open_time")
+    @Column(name = "open_time", nullable = false)
     private LocalDateTime openTime;
 
     @Column(name = "close_time")
     private LocalDateTime closeTime;
 
+    @Column(name = "open_amount", nullable = false, precision = 18, scale = 2)
+    private BigDecimal openAmount;
+
+    @Column(name = "close_amount", precision = 18, scale = 2)
+    private BigDecimal closeAmount;
+
     @Column(nullable = false, length = 20)
     private String status;
-
-    @Column(length = 255)
-    private String note;
-
-    @Column(name = "initial_cash", nullable = false, precision = 18, scale = 2)
-    @Builder.Default
-    private BigDecimal initialCash = BigDecimal.ZERO;
 }

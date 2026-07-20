@@ -1,15 +1,15 @@
 package vn.fcc.pos_coffee_be.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record ShiftsResponseDTO(
+public record CashHistoryResponse(
         Long id,
         String userId,
         String username,
-        Long slotId,
-        String slotName,
         LocalDateTime openTime,
         LocalDateTime closeTime,
-        String status,
-        String note
+        BigDecimal openAmount,
+        BigDecimal closeAmount,
+        String status
 ) {}

@@ -56,11 +56,21 @@ public class ShiftAssignmentServiceImpl implements IShiftAssignmentService {
     public ShiftSlotResponse createSlot(ShiftSlotRequest req) {
         validateSlotTimes(req.startTime(), req.endTime());
 
-        ShiftSlot slot = new ShiftSlot();
-        slot.setName(req.name().trim());
+        String name = req.name().trim();
+        LocalDate workDate = req.workDate();
+
+        // Upsert: nếu đã có slot (name, workDate) thì cập nhật giờ/active,
+        // tránh vi phạm uk_shift_slot_name_workdate khi FE click trùng cell.
+        ShiftSlot slot = slotRepository.findByNameAndWorkDate(name, workDate)
+                .orElseGet(() -> {
+                    ShiftSlot s = new ShiftSlot();
+                    s.setName(name);
+                    s.setWorkDate(workDate);
+                    return s;
+                });
+
         slot.setStartTime(req.startTime());
         slot.setEndTime(req.endTime());
-        slot.setWorkDate(req.workDate());
         slot.setActive(req.active() == null || req.active());
 
         return toSlotResponse(slotRepository.save(slot));
@@ -226,8 +236,13 @@ public class ShiftAssignmentServiceImpl implements IShiftAssignmentService {
     private boolean hasOverlap(List<ShiftAssignment> existing, ShiftSlot candidate) {
         LocalTime from = candidate.getStartTime();
         LocalTime to = candidate.getEndTime();
+        Long candidateSlotId = candidate.getId();
         for (ShiftAssignment a : existing) {
             ShiftSlot other = a.getSlot();
+            // Bỏ qua assignment trỏ về cùng slot id (tránh false positive khi trùng khung giờ).
+            if (other.getId() != null && other.getId().equals(candidateSlotId)) {
+                continue;
+            }
             if (other.getStartTime().isBefore(to) && from.isBefore(other.getEndTime())) {
                 return true;
             }

@@ -6,6 +6,7 @@ import vn.fcc.pos_coffee_be.entity.ShiftSlot;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShiftSlotRepository extends JpaRepository<ShiftSlot, Long> {
@@ -15,4 +16,6 @@ public interface ShiftSlotRepository extends JpaRepository<ShiftSlot, Long> {
     List<ShiftSlot> findByActiveTrueOrderByStartTimeAsc();
 
     boolean existsByNameAndWorkDate(String name, LocalDate workDate);
+
+    Optional<ShiftSlot> findByNameAndWorkDate(String name, LocalDate workDate);
 }

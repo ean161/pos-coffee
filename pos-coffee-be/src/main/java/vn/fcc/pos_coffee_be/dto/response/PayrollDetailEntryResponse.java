@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record PayrollDetailEntryResponse(
-        Long timeLogId,
+        Long shiftId,
         Long employeeId,
+        String slotName,
         LocalDateTime clockInTime,
         LocalDateTime clockOutTime,
-        BigDecimal totalHours,
+        BigDecimal workedHours,
         String status
 ) {
 }
