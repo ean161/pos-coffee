@@ -55,6 +55,20 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(productId));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable String id,
+            @Valid @RequestBody ProductRequest request) {
+        return ResponseEntity.ok(productService.updateProduct(id, request));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ProductResponse> updateProductStatus(
+            @PathVariable String id,
+            @RequestParam Boolean status) {
+        return ResponseEntity.ok(productService.updateProductStatus(id, status));
+    }
+
     @PutMapping("/variants/{variantId}")
     public ResponseEntity<ProductVariantResponse> updateVariant(
             @PathVariable String variantId,

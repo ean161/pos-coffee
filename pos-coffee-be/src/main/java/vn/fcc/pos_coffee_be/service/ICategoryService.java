@@ -10,7 +10,9 @@ public interface ICategoryService {
 
     CategoryResponse updateCategory(String id, String name);
 
-    void updateStatus(String id, Boolean status);
+//    void updateStatus(String id, Boolean status);
+
+    CategoryResponse updateStatus(String id, Boolean status);
 
     Page<CategoryResponse> getAllCategories(Pageable pageable);
 

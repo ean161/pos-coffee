@@ -60,7 +60,7 @@ const ProductDetailModal = ({ isOpen, onClose, product, onEdit }) => {
                         </div>
                         <div className="bg-[#FAF6F0] p-4 rounded-xl border border-[#efe6dc]">
                             <span className="text-[10px] uppercase font-bold text-stone-400 block tracking-wider">Danh mục liên kết</span>
-                            <span className="font-bold text-[#26170f] mt-1 block text-sm">Mã DM: {product.categoryId}</span>
+                            <span className="font-bold text-[#26170f] mt-1 block text-sm">{product.categoryName}</span>
                         </div>
                         <div className="bg-[#FAF6F0] p-4 rounded-xl border border-[#efe6dc]">
                             <span className="text-[10px] uppercase font-bold text-stone-400 block tracking-wider">Trạng thái</span>

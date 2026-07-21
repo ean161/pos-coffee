@@ -11,4 +11,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     org.springframework.data.domain.Page<Product> findByCategoryId(String categoryId, org.springframework.data.domain.Pageable pageable);
 
     List<Product> findByCategoryIdAndStatusTrueOrderByNameAsc(String categoryId);
+
+    List<Product> findByCategoryId(String categoryId);
 }

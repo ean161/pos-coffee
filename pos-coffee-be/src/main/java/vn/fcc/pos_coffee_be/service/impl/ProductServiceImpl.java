@@ -102,10 +102,37 @@ public class ProductServiceImpl implements IProductService {
         return mapToProductResponse(product);
     }
 
+    @Override
+    public ProductResponse updateProduct(String id, ProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại với ID: " + id));
+
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Danh mục không tồn tại với ID: " + request.categoryId()));
+
+        product.setName(request.name());
+        product.setBasePrice(request.basePrice());
+        product.setCategory(category);
+
+        Product updated = productRepository.save(product);
+        return mapToProductResponse(updated);
+    }
+
+    @Override
+    public ProductResponse updateProductStatus(String id, Boolean status) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sản phẩm không tồn tại với ID: " + id));
+
+        product.setStatus(status);
+        Product updated = productRepository.save(product);
+        return mapToProductResponse(updated);
+    }
+
     private ProductResponse mapToProductResponse(Product product) {
         return new ProductResponse(
                 product.getId(),
                 product.getCategory().getId(),
+                product.getCategory().getName(),
                 product.getName(),
                 product.getBasePrice(),
                 product.getStatus()

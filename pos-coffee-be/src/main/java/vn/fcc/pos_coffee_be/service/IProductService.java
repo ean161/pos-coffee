@@ -27,4 +27,8 @@ public interface IProductService {
     List<ProductVariantResponse> getVariantsByProductId(String productId);
 
     ProductResponse getProductById(String productId);
+
+    ProductResponse updateProduct(String id, ProductRequest request);
+
+    ProductResponse updateProductStatus(String id, Boolean status);;
 }
